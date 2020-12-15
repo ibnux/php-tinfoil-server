@@ -1,51 +1,25 @@
 <?php
-$file = $argv[1];
-if(empty($file)){
-    die("php export.php folder");
-}
-
-if(!file_exists("$file/db.txt")){
-    die("$file Not found");
-}
-
-if(file_exists("$file/process.txt")){
-    echo "$file/process.txt\n";
-    $games = file_get_contents("$file/process.txt");
-}else{
-    echo "$file/db.txt\n";
-    $games = file_get_contents("$file/db.txt");
-}
-$games = explode("\n", str_replace("\r", "", $games));
-$jml = count($games);
-for ($n=0;$n<$jml;$n++) {
-    echo "$n ";
-    $game = $games[$n];
-    $gms = explode("#",$game);
-    echo $gms[1]."\n";
-    if (checkFile($gms[0])) {
-        file_put_contents("$file/temp.txt",$game."\n",FILE_APPEND);
-    }
-    unset($games[$n]);
-    file_put_contents("$file/process.txt",implode("\n",array_values($games)));
-}
-if(file_exists("$file/aktif.txt")) unlink("$file/aktif.txt");
-rename("$file/temp.txt","$file/aktif.txt");
-if(file_exists("$file/process.txt")) unlink("$file/process.txt");
-
-function checkFile($url)
-{
-    echo $url . "\n";
-    $hasil = get_headers($url);
-    if (strpos($hasil[0], "200 OK") !== false) {
-        echo "OK\n";
-        return ['OK' => $hasil];
-    } elseif ($hasil[0] == 'HTTP/1.0 302 Moved Temporarily') {
-        foreach ($hasil as $h) {
-            if (strpos($h, "Location:") !== false) {
-                return checkFile(substr($h, 10, strlen($h) - 10));
-            }
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+require '../config.php';
+require '../function.php';
+$files = ['nsz', 'xci', 'updates', 'dlc','demos'];
+foreach ($files as $file) {
+    echo "$file\n";
+    if(file_exists($file . '/index.html')) unlink($file . '/index.html');
+    $games = $db->select('t_games',['id', 'title', 'fileSize'],['folder'=>$file,'ORDER'=>['title'=>'ASC']]);
+    $html = '<!DOCTYPE html><html>
+<head><title>Index of ' . $file . '</title><meta charset="utf-8"></head>
+<body bgcolor="white">
+<h1>Index ' . $file . '</h1><hr><pre><a href="../">../</a>'."\n";
+    file_put_contents($file . '/index.html', $html,FILE_APPEND);
+    foreach ($games as $game) {
+        echo $game['title']."\n";
+        if(!empty($game['title'])){
+            $html = '<a href="https://docs.google.com/uc?export=download&id=' . $game['id'] . '#' . urlencode(str_replace('#','',$game['title'])) . '">' . str_replace('#','',$game['title'])  . '</a>' . "\n";
+            file_put_contents($file . '/index.html', $html,FILE_APPEND);
         }
     }
-    echo $hasil[0] . "\n";
-    return false;
+    $html = '</pre><hr></body></html>';
+    file_put_contents($file . '/index.html', $html,FILE_APPEND);
 }
