@@ -20,7 +20,7 @@ $jml = count($games);
 for ($n=0;$n<$jml;$n++) {
     echo "$n ";
     $game = $games[$n];
-    $gms = explode("#",$game)[0];
+    $gms = explode("#",$game);
     echo $gms[1]."\n";
     if (checkFile($gms[0])) {
         file_put_contents("$file/temp.txt",$game."\n",FILE_APPEND);
