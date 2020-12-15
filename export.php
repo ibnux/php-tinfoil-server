@@ -16,10 +16,19 @@ foreach ($files as $file) {
     foreach ($games as $game) {
         echo $game['title']."\n";
         if(!empty($game['title'])){
-            $html = '<a href="https://docs.google.com/uc?export=download&id=' . $game['id'] . '#' . urlencode(str_replace('#','',$game['title'])) . '">' . str_replace('#','',$game['title'])  . '</a>' . "\n";
+            $html = '<a href="https://docs.google.com/uc?export=download&id=' . $game['id'] . '#' . urlencode(str_replace('#','',$game['title'])) . '">' . str_replace('#','',$game['title'])  . "</a>".addSpace(str_replace('#','',$game['title'])).date("Y-m-d H:i:s")."\t\t\t\t".$game['fileSize']. "\n";
             file_put_contents($file . '/index.html', $html,FILE_APPEND);
         }
     }
     $html = '</pre><hr></body></html>';
     file_put_contents($file . '/index.html', $html,FILE_APPEND);
+}
+
+function addSpace($txt){
+    $hsl = 128 - strlen($txt);
+    $spasi = '';
+    for($n=0;$n<$hsl;$n++){
+        $spasi .= ' ';
+    }
+    return $spasi;
 }
