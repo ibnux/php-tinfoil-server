@@ -1,40 +1,49 @@
 <?php
-$files = ['nsz', 'xci', 'updates', 'dlc'];
-$gmss = array();
-foreach ($files as $file) {
-    $games = file_get_contents("$file/$file.txt");
-    $games = explode("\n", str_replace("\r", "", $games));
-    $html = '<!DOCTYPE html><html>
-<head><title>Index of ' . $file . '</title><meta charset="utf-8"></head>
-<body bgcolor="white">
-<h1>Index ' . $file . '</h1><hr><pre><a href="../">../</a>'."\n";
-    foreach ($games as $game) {
-        if(checkFile($game)){
-            $gms = explode("#", $game);
-            $html .= '<a href="' . $game . '">' . $gms[1] . '</a>' . "\n";
-        }
-    }
-    $gmss = array_merge($gmss, $games);
-    $html .= '</pre><hr></body></html>';
-    file_put_contents($file . '/index.html', $html);
-    file_put_contents("$file/index.tfl", json_encode(['url' => $games, 'success' => 'Jangan di Abuse, beberapa game mungkin overload di download']));
+$file = $argv[1];
+if(empty($file)){
+    die("php export.php folder");
 }
-file_put_contents("index.tfl", json_encode(['directories' => ['nsp', 'dlc', 'updates', 'xci'], 'success' => 'Jangan di Abuse, beberapa game mungkin overload di download']));
 
+if(!file_exists("$file/db.txt")){
+    die("$file Not found");
+}
 
-function checkFile($url){
-    echo $url."\n";
+if(file_exists("$file/process.txt")){
+    echo "$file/process.txt\n";
+    $games = file_get_contents("$file/process.txt");
+}else{
+    echo "$file/db.txt\n";
+    $games = file_get_contents("$file/db.txt");
+}
+$games = explode("\n", str_replace("\r", "", $games));
+$jml = count($games);
+for ($n=0;$n<$jml;$n++) {
+    echo "$n ";
+    $game = $games[$n];
+    if (checkFile($game)) {
+        file_put_contents("$file/temp.txt",$game."\n",FILE_APPEND);
+    }
+    unset($games[$n]);
+    file_put_contents("$file/process.txt",implode("\n",array_values($games)));
+}
+if(file_exists("$file/aktif.txt")) unlink("$file/aktif.txt");
+rename("$file/temp.txt","$file/aktif.txt");
+if(file_exists("$file/process.txt")) unlink("$file/process.txt");
+
+function checkFile($url)
+{
+    echo $url . "\n";
     $hasil = get_headers($url);
-    if(strpos($hasil[0],"200 OK")!==false){
+    if (strpos($hasil[0], "200 OK") !== false) {
         echo "OK\n";
-        return ['OK'=>$hasil];
-    }elseif($hasil[0]=='HTTP/1.0 302 Moved Temporarily'){
-        foreach($hasil as $h){
-            if(strpos($h,"Location:")!==false){
-                return checkFile(substr($h,10,strlen($h)-10));
+        return ['OK' => $hasil];
+    } elseif ($hasil[0] == 'HTTP/1.0 302 Moved Temporarily') {
+        foreach ($hasil as $h) {
+            if (strpos($h, "Location:") !== false) {
+                return checkFile(substr($h, 10, strlen($h) - 10));
             }
         }
     }
-    echo "NOT OK\n";
+    echo $hasil[0] . "\n";
     return false;
 }
