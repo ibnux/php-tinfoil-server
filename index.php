@@ -4,7 +4,11 @@ require 'config.php';
 require 'function.php';
 use Medoo\Medoo;
 
-$pin = require_auth();
+if($must_login){
+    $pin = require_auth()."@";
+}else{
+    $pin = "";
+}
 
 $db = new Medoo([
 	// required
@@ -17,7 +21,7 @@ $db = new Medoo([
 
 header("Content-Type: application/json");
 
-$_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin@$_SERVER[HTTP_HOST]/";
+$_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin$_SERVER[HTTP_HOST]/";
 //Parsing URL
 $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'])['path'])));
 
