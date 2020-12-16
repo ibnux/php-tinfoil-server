@@ -50,11 +50,6 @@ if(!empty($_path[0])){
             echo json_encode(['files'=>$json]);
         }
         die();
-    }else if($folder=='dl'){
-        $folder = alphanumeric($_path[1]);
-        $db->update('t_games', ['hit'=>Medoo::raw('hit+1')], ['id'=>$folder]);
-        header("Location: https://docs.google.com/uc?export=download&id=".$folder);
-        die();
     }
 }
 
