@@ -38,13 +38,12 @@ if(!empty($_path[0])){
                 if(!empty($game['title']) && !empty($game['titleid'])){
                     if($game['fileSize']>0){
                         $json[] = [
-                            'url'=>$_host.'dl/'.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title']))),
+                            'url'=>'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title'])),
                             'size'=>$game['fileSize']
                         ];
                     }else{
-                        $json[] = $_host.'dl/'.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title'])));
+                        $json[] = 'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title']));
                     }
-                }
             }
             file_put_contents("./cache/$folder.json",json_encode(['files'=>$json]));
             echo json_encode(['files'=>$json]);
