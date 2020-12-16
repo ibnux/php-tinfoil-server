@@ -46,7 +46,7 @@ function require_auth() {
 
 
 function alphanumeric($str){
-    return preg_replace("/[^a-zA-Z0-9 ]+/", "", $str);
+    return preg_replace("/[^a-zA-Z0-9 _-]+/", "", $str);
 }
 
 function sendSMS($phone,$txt){

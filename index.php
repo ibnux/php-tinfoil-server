@@ -38,17 +38,22 @@ if(!empty($_path[0])){
                 if(!empty($game['title']) && !empty($game['titleid'])){
                     if($game['fileSize']>0){
                         $json[] = [
-                            'url'=>'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title'])),
+                            'url'=>$_host.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title']))),
                             'size'=>$game['fileSize']
                         ];
                     }else{
-                        $json[] = 'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title']));
+                        $json[] = $_host.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title'])));
                     }
                 }
             }
             file_put_contents("./cache/$folder.json",json_encode(['files'=>$json]));
             echo json_encode(['files'=>$json]);
         }
+        die();
+    }else if($folder=='dl'){
+        $folder = alphanumeric($_path[1]);
+        $db->update('t_games', ['hit'=>Medoo::raw('hit+1')], ['id'=>$folder]);
+        header("Location: https://docs.google.com/uc?export=download&id=".$folder);
         die();
     }else if($folder=='clean'){
         $files = scandir("./cache/");
