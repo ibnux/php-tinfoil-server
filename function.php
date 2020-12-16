@@ -2,7 +2,7 @@
 
 function require_auth() {
     header('Cache-Control: no-cache, must-revalidate, max-age=0');
-    $pesan = $_SERVER['HTTP_HOST'].' Masukkan Nomor HP (cth: 0812345678) anda sebagai Username, kosongkan password, password akan dikirim ke nomor anda via Whatsapp. Hanya nomor Indonesia yang bisa. nomor HP tidak disimpan di server';
+    $pesan = $_SERVER['HTTP_HOST'].' Masukkan Nomor HP (cth: 0812345678) anda sebagai Username, password isi qwe, password asli akan dikirim ke nomor anda via Whatsapp. Hanya nomor Indonesia yang bisa. nomor HP tidak disimpan di server';
     $is_not_authenticated = true;
     if(!empty($_SERVER['PHP_AUTH_USER'])){
         $phone = alphanumeric($_SERVER['PHP_AUTH_USER']);
