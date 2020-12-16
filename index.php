@@ -38,11 +38,11 @@ if(!empty($_path[0])){
                 if(!empty($game['title']) && !empty($game['titleid'])){
                     if($game['fileSize']>0){
                         $json[] = [
-                            'url'=>$_host.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title']))),
+                            'url'=>$_host.'dl/'.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title']))),
                             'size'=>$game['fileSize']
                         ];
                     }else{
-                        $json[] = $_host.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title'])));
+                        $json[] = $_host.'dl/'.$game['id'].'/'.urlencode(str_replace('#','',trim($game['title'])));
                     }
                 }
             }
