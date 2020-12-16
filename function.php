@@ -5,7 +5,7 @@ function require_auth() {
     $is_not_authenticated = true;
     if(!empty($_SERVER['PHP_AUTH_USER'])){
         $nohp = alphanumeric($_SERVER['PHP_AUTH_USER']);
-        $pathUser = "./data/user/$nohp.user";
+        $pathUser = "./data/user/".md5($nohp).".user";
         if(empty($_SERVER['PHP_AUTH_PW'])){
             if(file_exists($pathUser)){
                 $pin = file_get_contents($pathUser);
@@ -33,7 +33,7 @@ function require_auth() {
 		header('HTTP/1.1 401 Authorization Required');
         header('WWW-Authenticate: Basic realm="Access denied"');
         $json = [
-            'success' => $_SERVER['HTTP_HOST'].' Masukkan Nomor HP (cth: 0812345678) anda sebagai Username, kosongkan password, password akan dikirim ke nomor anda via Whatsapp. Hanya nomor Indonesia yang bisa.'
+            'success' => $_SERVER['HTTP_HOST'].' Masukkan Nomor HP (cth: 0812345678) anda sebagai Username, kosongkan password, password akan dikirim ke nomor anda via Whatsapp. Hanya nomor Indonesia yang bisa. nomor HP tidak disimpan di server'
         ];
         echo json_encode($json);
 		exit;
@@ -47,7 +47,7 @@ function alphanumeric($str){
 }
 
 function sendWA($nohp,$txt){
-    $path = "./data/sms/$nohp.sms";
+    $path = "./data/sms/".md5($nohp).".sms";
     if(file_exists($path)){
         if(time()-filemtime($path)>60)
             return file_get_contents("https://wa.ibnux.com/wa.php?to=$nohp&msg=" . urlencode($txt));

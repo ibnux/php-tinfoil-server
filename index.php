@@ -51,7 +51,7 @@ if(!empty($_path[0])){
 
 $folders = $db->select('t_games', ['folder'=>Medoo::raw('DISTINCT folder')], $where);
 $json = [
-    'success' => 'Pakai Seperlunya, jangan di share kecuali ke member grup aja, biar ngga ditegur tendo. punya google drive mau dishare juga? mention @ibnux | Donasi Biaya Server trakteer.id/ibnux karyakarsa.com/ibnux'
+    'success' => 'Pakai Seperlunya, Download hanya yang mau dimainkan, agar tidak cepat kena limit. punya google drive mau dishare juga? mention @ibnux | Donasi Biaya Server trakteer.id/ibnux karyakarsa.com/ibnux'
 ];
 
 foreach($folders as $folder){
