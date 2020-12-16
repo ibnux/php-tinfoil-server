@@ -48,6 +48,11 @@ function alphanumeric($str){
 
 function sendWA($nohp,$txt){
     $path = "./data/sms/$nohp.sms";
-    if(file_exists($path) && time()-filemtime($path)>60)
+    if(file_exists($path)){
+        if(time()-filemtime($path)>60)
+            return file_get_contents("https://wa.ibnux.com/wa.php?to=$nohp&msg=" . urlencode($txt));
+    }else{
+        file_put_contents($path,$txt);
         return file_get_contents("https://wa.ibnux.com/wa.php?to=$nohp&msg=" . urlencode($txt));
+    }
 }
