@@ -13,19 +13,19 @@ function require_auth() {
                 $pin = rand(1000,9999);
                 file_put_contents($pathUser,$pin);
             }
-            sendWA($nohp,"Password Tinfoil anda: $pin");
+            sendWA($nohp,"Password Tinfoil anda: $pin\n\nHiraukan jika anda tidak merasa meminta Password ini");
         }else{
             if(file_exists($pathUser)){
                 $pin = file_get_contents($pathUser);
                 if($pin!=$_SERVER['PHP_AUTH_PW']){
-                    sendWA($nohp,"Password Tinfoil anda: $pin");
+                    sendWA($nohp,"Password Tinfoil anda: $pin\n\nHiraukan jika anda tidak merasa meminta Password ini");
                 }else{
                     $is_not_authenticated = false;
                 }
             }else{
                 $pin = rand(1000,9999);
                 file_put_contents($pathUser,$pin);
-                sendWA($nohp,"Password Tinfoil anda: $pin");
+                sendWA($nohp,"Password Tinfoil anda: $pin\n\nHiraukan jika anda tidak merasa meminta Password ini");
             }
         }
     }
