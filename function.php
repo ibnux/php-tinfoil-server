@@ -52,7 +52,7 @@ function alphanumeric($str){
 function sendWA($nohp,$txt){
     $path = "./data/sms/".md5($nohp).".sms";
     if(file_exists($path)){
-        if(time()-filemtime($path)>60)
+        if(time()-filemtime($path)>300)
             return file_get_contents("https://wa.ibnux.com/wa.php?to=$nohp&msg=" . urlencode($txt));
     }else{
         file_put_contents($path,$txt);
