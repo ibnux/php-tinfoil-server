@@ -5,7 +5,7 @@ function require_auth() {
     $is_not_authenticated = true;
     if(!empty($_SERVER['PHP_AUTH_USER'])){
         $nohp = alphanumeric($_SERVER['PHP_AUTH_USER']);
-        $pathUser = "data/user/$nohp.user";
+        $pathUser = "./data/user/$nohp.user";
         if(empty($_SERVER['PHP_AUTH_PW'])){
             if(file_exists($pathUser)){
                 $pin = file_get_contents($pathUser);
