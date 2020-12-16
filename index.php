@@ -44,6 +44,7 @@ if(!empty($_path[0])){
                     }else{
                         $json[] = 'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title']));
                     }
+                }
             }
             file_put_contents("./cache/$folder.json",json_encode(['files'=>$json]));
             echo json_encode(['files'=>$json]);
