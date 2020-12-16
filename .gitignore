@@ -3,3 +3,5 @@ vendor
 .htaccess
 data/user/**
 !data/user/index.html
+cache/**
+!cache/index.html
