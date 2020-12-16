@@ -49,9 +49,12 @@ if(!empty($_path[0])){
     }else if($folder=='clean'){
         $files = scandir("./cache/");
         foreach($files as $file){
-
+            if(pathinfo($file, PATHINFO_EXTENSION)=='json'){
+                unlink("./cache/$file");
+            }
         }
         echo json_encode(['deleted'=>$files]);
+        exit;
     }
 }
 
