@@ -31,7 +31,7 @@ function require_auth() {
     }
 	if ($is_not_authenticated) {
 		header('HTTP/1.1 401 Authorization Required');
-        header('WWW-Authenticate: Basic realm="Access denied"');
+        header('WWW-Authenticate: Basic realm="Masukkan Nomor HP anda, lalu check Whatsapp"');
         $json = [
             'success' => $_SERVER['HTTP_HOST'].' Masukkan Nomor HP (cth: 0812345678) anda sebagai Username, kosongkan password, password akan dikirim ke nomor anda via Whatsapp. Hanya nomor Indonesia yang bisa. nomor HP tidak disimpan di server'
         ];

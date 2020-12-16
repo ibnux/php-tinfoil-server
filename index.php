@@ -31,7 +31,7 @@ if(!empty($_path[0])){
             $json = array();
             $games = $db->select('t_games',['id', 'title', 'fileSize'],['folder'=>$folder,'ORDER'=>['title'=>'ASC']]);
             foreach($games as $game){
-                if(!empty($game['title'])){
+                if(!empty($game['title']) && !empty($game['titleid'])){
                     if($game['fileSize']>0){
                         $json[] = [
                             'url'=>'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title'])),
@@ -46,6 +46,12 @@ if(!empty($_path[0])){
             echo json_encode(['files'=>$json]);
         }
         die();
+    }else if($folder=='clean'){
+        $files = scandir("./cache/");
+        foreach($files as $file){
+
+        }
+        echo json_encode(['deleted'=>$files]);
     }
 }
 
