@@ -29,7 +29,7 @@ if(!empty($_path[0])){
             readfile("./cache/$folder.json");
         }else{
             $json = array();
-            $games = $db->select('t_games',['id', 'title', 'fileSize'],['folder'=>$folder,'ORDER'=>['title'=>'ASC']]);
+            $games = $db->select('t_games',['id', 'title','titleid', 'fileSize'],['folder'=>$folder,'ORDER'=>['title'=>'ASC']]);
             foreach($games as $game){
                 if(!empty($game['title']) && !empty($game['titleid'])){
                     if($game['fileSize']>0){
