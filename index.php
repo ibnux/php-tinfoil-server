@@ -20,26 +20,7 @@ header("Content-Type: application/json");
 $_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin@$_SERVER[HTTP_HOST]/";
 //Parsing URL
 $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'])['path'])));
-/*
-{
-    "files": [
-        {
-            "url": "https://url1",
-            "size": 1000
-        },
-        {
-            "url": "https://url2",
-            "size": 3000
-        },
-        {
-            "url": "https://url3",
-            "size": 5000
-        }
-    ],
-    "directories": ["https://url1", "sdmc:/url2", "http://url3"],
-    "success": "motd text here"
-}
-*/
+
 if(!empty($_path[0])){
     $folder = alphanumeric($_path[0]);
     if($db->has("t_games",['folder'=>$folder])){

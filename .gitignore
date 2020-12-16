@@ -5,3 +5,5 @@ data/user/**
 !data/user/index.html
 cache/**
 !cache/index.html
+data/sms/**
+!data/sms/index.html
