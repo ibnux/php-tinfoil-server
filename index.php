@@ -55,15 +55,6 @@ if(!empty($_path[0])){
         $db->update('t_games', ['hit'=>Medoo::raw('hit+1')], ['id'=>$folder]);
         header("Location: https://docs.google.com/uc?export=download&id=".$folder);
         die();
-    }else if($folder=='clean'){
-        $files = scandir("./cache/");
-        foreach($files as $file){
-            if(pathinfo($file, PATHINFO_EXTENSION)=='json'){
-                unlink("./cache/$file");
-            }
-        }
-        echo json_encode(['deleted'=>$files]);
-        exit;
     }
 }
 
