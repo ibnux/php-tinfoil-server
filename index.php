@@ -29,8 +29,10 @@ if(!empty($_path[0])){
     $folder = alphanumeric($_path[0]);
     if($db->has("t_games",['folder'=>$folder])){
         header('Content-Disposition: filename="'.$folder.'.json"');
-        if(file_exists("./cache/$folder.json")){
-            readfile("./cache/$folder.json");
+        $cacheFile = "./cache/".md5($folder.$dbpass).".json";
+
+        if(file_exists($cacheFile )){
+            readfile($cacheFile );
         }else{
             $json = array();
             $games = $db->select('t_games',['id', 'title','titleid', 'fileSize'],['folder'=>$folder,'ORDER'=>['title'=>'ASC']]);
@@ -46,7 +48,7 @@ if(!empty($_path[0])){
                     }
                 }
             }
-            file_put_contents("./cache/$folder.json",json_encode(['files'=>$json]));
+            file_put_contents($cacheFile ,json_encode(['files'=>$json]));
             echo json_encode(['files'=>$json]);
         }
         die();
