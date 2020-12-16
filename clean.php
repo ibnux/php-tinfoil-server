@@ -7,5 +7,5 @@ foreach($files as $file){
         unlink("./cache/$file");
     }
 }
-echo json_encode(['deleted'=>$files]);
+echo json_encode(['deleted'=>count($files)]);
 exit;
