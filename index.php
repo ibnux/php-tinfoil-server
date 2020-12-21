@@ -41,20 +41,20 @@ if(!empty($_path[0])){
                     if(substr($game['url'],0,4)=='http'){
                         if($game['fileSize']>0){
                             $json[] = [
-                                'url'=>$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
+                                'url'=>$game['url'].'#'.(str_replace('#','',$game['filename'])),
                                 'size'=>intval($game['fileSize'])
                             ];
                         }else{
-                            $json[] = $game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
+                            $json[] = $game['url'].'#'.(str_replace('#','',$game['filename']));
                         }
                     }else{
                         if($game['fileSize']>0){
                             $json[] = [
-                                'url'=>'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
+                                'url'=>'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.(str_replace('#','',$game['filename'])),
                                 'size'=>intval($game['fileSize'])
                             ];
                         }else{
-                            $json[] = 'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
+                            $json[] = 'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.(str_replace('#','',$game['filename']));
                         }
                     }
                 }
