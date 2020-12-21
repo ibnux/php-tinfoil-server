@@ -42,7 +42,7 @@ if(!empty($_path[0])){
                         if($game['fileSize']>0){
                             $json[] = [
                                 'url'=>$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
-                                'size'=>$game['fileSize']
+                                'size'=>intval($game['fileSize'])
                             ];
                         }else{
                             $json[] = $game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
@@ -51,7 +51,7 @@ if(!empty($_path[0])){
                         if($game['fileSize']>0){
                             $json[] = [
                                 'url'=>'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
-                                'size'=>$game['fileSize']
+                                'size'=>intval($game['fileSize'])
                             ];
                         }else{
                             $json[] = 'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
