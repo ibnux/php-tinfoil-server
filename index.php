@@ -35,27 +35,38 @@ if(!empty($_path[0])){
             readfile($cacheFile );
         }else{
             $json = array();
-            $games = $db->select('t_games',['id', 'title','titleid', 'fileSize'],['folder'=>$folder,'ORDER'=>['title'=>'ASC']]);
+            $games = $db->select('t_games',['url', 'filename','titleid', 'fileSize'],['AND'=>['folder'=>$folder,'shared'=>1],'ORDER'=>['title'=>'ASC']]);
             foreach($games as $game){
-                if(!empty($game['title']) && !empty($game['titleid'])){
-                    if($game['fileSize']>0){
-                        $json[] = [
-                            'url'=>'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title'])),
-                            'size'=>$game['fileSize']
-                        ];
+                if(!empty($game['filename']) && !empty($game['titleid'])){
+                    if(substr($game['url'],0,4)=='http'){
+                        if($game['fileSize']>0){
+                            $json[] = [
+                                'url'=>$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
+                                'size'=>$game['fileSize']
+                            ];
+                        }else{
+                            $json[] = $game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
+                        }
                     }else{
-                        $json[] = 'https://docs.google.com/uc?export=download&id='.$game['id'].'#'.urlencode(str_replace('#','',$game['title']));
+                        if($game['fileSize']>0){
+                            $json[] = [
+                                'url'=>'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
+                                'size'=>$game['fileSize']
+                            ];
+                        }else{
+                            $json[] = 'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
+                        }
                     }
                 }
             }
-            file_put_contents($cacheFile ,json_encode(['files'=>$json]));
-            echo json_encode(['files'=>$json]);
+            file_put_contents($cacheFile ,json_encode(['total'=>count($json),'files'=>$json]));
+            echo json_encode(['total'=>count($json),'files'=>$json]);
         }
         die();
     }
 }
 
-$folders = $db->select('t_games', ['folder'=>Medoo::raw('DISTINCT folder')], $where);
+$folders = $db->select('t_games', ['folder'=>Medoo::raw('DISTINCT folder')]);
 $json = [
     'success' => 'Pakai Seperlunya, Download hanya yang mau dimainkan, agar tidak cepat kena limit. punya google drive mau dishare juga? mention @ibnux | Donasi Biaya Server trakteer.id/ibnux karyakarsa.com/ibnux'
 ];
