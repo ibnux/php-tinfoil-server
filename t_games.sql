@@ -64,3 +64,32 @@ ALTER TABLE `t_games`
 ALTER TABLE `t_games`
   MODIFY `nomor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
+
+
+--
+-- Table structure for table `t_switch`
+--
+
+DROP TABLE IF EXISTS `t_switch`;
+CREATE TABLE `t_switch` (
+  `titleid` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
+  `image` varchar(512) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `description` text COLLATE utf8mb4_general_ci NOT NULL,
+  `publisher` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
+  `languages` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
+  `rating` tinyint(1) NOT NULL DEFAULT '0',
+  `size` varchar(16) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `t_switch`
+--
+ALTER TABLE `t_switch`
+  ADD PRIMARY KEY (`titleid`),
+  ADD KEY `name` (`name`);
+COMMIT;
