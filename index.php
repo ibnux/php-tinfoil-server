@@ -10,14 +10,7 @@ if($must_login){
     $pin = "";
 }
 
-$db = new Medoo([
-	// required
-	'database_type' => 'mysql',
-	'database_name' => $dbname,
-	'server' => $dbhost,
-	'username' => $dbuser,
-    'password' => $dbpass
-]);
+$db = getDatabase();
 
 header("Content-Type: application/json");
 
@@ -27,7 +20,7 @@ $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'
 
 if(!empty($_path[0])){
     $folder = alphanumeric($_path[0]);
-    if($db->has("t_games",['folder'=>$folder])){
+    if($db->has("t_games_url",['folder'=>$folder])){
         header('Content-Disposition: filename="'.$folder.'.json"');
         $cacheFile = "./cache/".md5($folder.$dbpass).".json";
 
@@ -35,7 +28,7 @@ if(!empty($_path[0])){
             readfile($cacheFile );
         }else{
             $json = array();
-            $games = $db->select('t_games',['url', 'filename','titleid', 'fileSize'],['AND'=>['folder'=>$folder,'shared'=>1],'ORDER'=>['title'=>'ASC']]);
+            $games = $db->select("t_games_url",['url', 'filename','titleid', 'fileSize'],['AND'=>['folder'=>$folder,'shared'=>1],'ORDER'=>['title'=>'ASC']]);
             foreach($games as $game){
                 if(!empty($game['filename']) && !empty($game['titleid'])){
                     if(substr($game['url'],0,4)=='http'){
@@ -66,9 +59,9 @@ if(!empty($_path[0])){
     }
 }
 
-$folders = $db->select('t_games', ['folder'=>Medoo::raw('DISTINCT folder')]);
+$folders = $db->select("t_games_url", ['folder'=>Medoo::raw('DISTINCT folder')]);
 $json = [
-    'success' => 'Pakai Seperlunya, Download hanya yang mau dimainkan, agar tidak cepat kena limit. punya google drive mau dishare juga? mention @ibnux | Donasi Biaya Server trakteer.id/ibnux karyakarsa.com/ibnux'
+    'success' => $motd
 ];
 
 foreach($folders as $folder){
