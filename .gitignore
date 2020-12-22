@@ -13,8 +13,11 @@ data/games/nsz/**
 !data/games/nsz/index.html
 data/games/xci/**
 !data/games/xci/index.html
-import
 !data/sms/.htaccess
 !data/user/.htaccess
 import/folder.txt
 data/base.db
+import/token/**
+import/temp/**
+!import/token/.htaccess
+!import/temp/.htaccess
