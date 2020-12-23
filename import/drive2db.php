@@ -75,4 +75,4 @@ foreach($drives as $drive){
     file_put_contents("$pathPageToken",'');
     echo "$idfolder FINISH\n\n";
 }
-
+echo "\n\nDONT FORGET TO RUN clean.php from browser\n\n";
