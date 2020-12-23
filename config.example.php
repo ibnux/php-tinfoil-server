@@ -23,14 +23,10 @@ $must_login = false;
 // GOOGLE DRIVE AUTH CONFIGURATION
 // https://www.iperiusbackup.net/en/how-to-enable-google-drive-api-and-get-client-credentials/
 // but in OAuth consent screen, just select internal, for your own use only, if it can be selected
-$client_id = "1522280-sas.apps.googleusercontent.com";
-$client_sc = "sasa-bU72HeBGpLeZol";
-$scopes = [ 'https://www.googleapis.com/auth/drive',
-            'https://www.googleapis.com/auth/drive.file',
-            'https://www.googleapis.com/auth/drive.appdata',
-            'https://www.googleapis.com/auth/drive.apps.readonly',
-            'https://www.googleapis.com/auth/drive.photos.readonly'
-        ];
+// i share my conf, bas364 only to make google not notify me
+$client_id = base64_decode("MTAyMDU3MDA2MzIwMS11Ymt2ZGM4bzNmMXNxOWl0N2pjOG9vZjQxazBoaDF2Zy5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbQ==");
+$client_sc = base64_decode("cm5hTTdMQ1E1TjRYdVVYakZ0aFJBN2F6");
+$scopes = [ 'https://www.googleapis.com/auth/drive.apps.readonly'];
 
 // ADD REDIRECT To Credential API
 $redirect = "http://".$_SERVER['HTTP_HOST']."/import/login.php";

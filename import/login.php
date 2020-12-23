@@ -1,5 +1,6 @@
 <?php
 
+include "../config.php";
 /**
  * open this from browser
  * Oauth2 login for google

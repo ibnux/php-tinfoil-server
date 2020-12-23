@@ -18,7 +18,7 @@ foreach($drives as $drive){
     $idfolder = trim($drive[0]);
     $folder = trim($drive[1]);
 
-    $jsoncredential = json_decode(file_get_contents("data/credentials.txt"),true);
+    $jsoncredential = json_decode(file_get_contents("token/credentials.txt"),true);
     $sisa = time()-filemtime("token/credentials.txt");
     if($sisa>$jsoncredential['expires_in']-300){
         updateToken();
