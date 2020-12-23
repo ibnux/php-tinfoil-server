@@ -14,8 +14,12 @@ $db = getDatabase();
 
 header("Content-Type: application/json");
 
-$_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin$_SERVER[HTTP_HOST]";
-//Parsing URL
+if(!isset($url_server)){
+    $_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin$_SERVER[HTTP_HOST]";
+}else{
+    $_host = $url_server;
+}
+    //Parsing URL
 $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'])['path'])));
 
 if(!empty($_path[0])){

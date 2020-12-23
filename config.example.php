@@ -1,4 +1,7 @@
 <?php
+// URL domain https://domain/
+// if you use docker, you need set this url
+# $url_server = "https://ibnux.com";
 
 // mysql or sqlite
 $dbtype = "sqlite";
