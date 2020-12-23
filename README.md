@@ -6,6 +6,7 @@ This script can serve Google Drive link, URL Files (No admin for inserting), or 
 
 based on [this documentation](https://blawar.github.io/tinfoil/custom_index/)
 
+## INSTALATION
 sample on **tabel.sql**
 
 - upload to server
@@ -22,6 +23,11 @@ sample on **tabel.sql**
 
 if you enable login **$must_login = false;** you must use SMS Server or WhatsApp server. username is phone number, and pasword anything, it will send real password by sms.
 
+## DOCKER
+- copy **config.example.php** to **config.php** and edit it
+- run `docker-compose up`
+- it will start download game data
+- port will open on 8880
 ## IMPORTING games from Google drive
 
 all script need to run from command line, except Google login. need to run from browser.
