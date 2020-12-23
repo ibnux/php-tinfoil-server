@@ -1,7 +1,7 @@
 <?php
 
 // mysql or sqlite
-$dbtype = "mysql";
+$dbtype = "sqlite";
 
 // MYSQL
 $dbname = 'nintendo';
@@ -12,7 +12,7 @@ $dbpass = '##mysql';
 // SQLITE
 $dbpath = "data/base.db";
 
-$motd   = "Use as needed, download only what you want to play, so you don't get to the limit quickly. Have a Google Drive to share too? mention @ibnux | donate paypal.me/ibnux";
+$motd   = "Use as needed, download only what you want to play, so you don't get to the limit quickly. Have a Google Drive to share too? mention t.me/ibnux | donate paypal.me/ibnux";
 
 $must_login = false;
 

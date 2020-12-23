@@ -64,7 +64,7 @@ if(!empty($_path[0])){
                 }
             }
             file_put_contents($cacheFile ,json_encode(['total'=>count($json),'files'=>$json]));
-            echo json_encode(['total'=>count($json),'files'=>$json,'data'=> $games]);
+            echo json_encode(['total'=>count($json),'files'=>$json]);
         }
         die();
     }

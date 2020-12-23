@@ -14,7 +14,7 @@ $xmls = (array)simplexml_load_string(file_get_contents('http://nswdb.com/xml.php
 
 $releases = $xmls['release'];
 echo count($releases) . " titles\n";
-sleep(4);
+sleep(1);
 foreach ($releases as $release) {
     $data = (array) $release;
     $titleid = preg_replace("/[^a-zA-Z0-9]+/", "", $data['titleid']) . "";
@@ -52,7 +52,7 @@ foreach ($releases as $release) {
 #tinfoil
 $releases = json_decode(file_get_contents("https://raw.githubusercontent.com/blawar/titledb/master/US.en.json"), true);
 echo count($releases) . " titles\n";
-sleep(4);
+sleep(1);
 foreach ($releases as $version => $data) {
     try {
         if (!empty($data['name'])) {
