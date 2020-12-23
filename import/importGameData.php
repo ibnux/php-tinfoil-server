@@ -33,7 +33,7 @@ foreach ($releases as $release) {
                 'size' => 0
             ]);
             if($db->id()>0){
-                echo $titleid . " " . $db->id() . "\n";
+                echo "INSERTED ".$data['name'] . " " . $db->id() . "\n";
             }else{
                 print_r($db->error());
             }

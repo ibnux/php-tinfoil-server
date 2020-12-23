@@ -19,10 +19,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `t_games`
+-- Table structure for table `t_games_url`
 --
 
-CREATE TABLE `t_games` (
+CREATE TABLE `t_games_url` (
   `nomor` int(11) NOT NULL,
   `url` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `filename` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '',
@@ -37,10 +37,10 @@ CREATE TABLE `t_games` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `t_games`
+-- Dumping data for table `t_games_url`
 --
 
-INSERT INTO `t_games` (`nomor`, `url`, `filename`, `title`, `titleid`, `fileSize`, `md5Checksum`, `folder`, `root`, `owner`, `shared`) VALUES
+INSERT INTO `t_games_url` (`nomor`, `url`, `filename`, `title`, `titleid`, `fileSize`, `md5Checksum`, `folder`, `root`, `owner`, `shared`) VALUES
 (1, '1Ywmnyna6yeZE8pyp9S27v9ygO0A2Uvz5', 'Youtubers Life OMG Edition[01002C9005F36000][US][v0].nsz', 'Youtubers Life OMG Edition', '01002C9005F36000', '665796945', '60710e3ecd4683fcfa7742e50785283b', 'nsz', ' ', ' ', 1);
 
 --
@@ -48,9 +48,9 @@ INSERT INTO `t_games` (`nomor`, `url`, `filename`, `title`, `titleid`, `fileSize
 --
 
 --
--- Indexes for table `t_games`
+-- Indexes for table `t_games_url`
 --
-ALTER TABLE `t_games`
+ALTER TABLE `t_games_url`
   ADD PRIMARY KEY (`nomor`),
   ADD UNIQUE KEY `id` (`url`);
 
@@ -59,19 +59,19 @@ ALTER TABLE `t_games`
 --
 
 --
--- AUTO_INCREMENT for table `t_games`
+-- AUTO_INCREMENT for table `t_games_url`
 --
-ALTER TABLE `t_games`
+ALTER TABLE `t_games_url`
   MODIFY `nomor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 
 --
--- Table structure for table `t_switch`
+-- Table structure for table `t_games`
 --
 
-DROP TABLE IF EXISTS `t_switch`;
-CREATE TABLE `t_switch` (
+DROP TABLE IF EXISTS `t_games`;
+CREATE TABLE `t_games` (
   `titleid` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `name` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
   `image` varchar(512) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
@@ -87,9 +87,9 @@ CREATE TABLE `t_switch` (
 --
 
 --
--- Indexes for table `t_switch`
+-- Indexes for table `t_games`
 --
-ALTER TABLE `t_switch`
+ALTER TABLE `t_games`
   ADD PRIMARY KEY (`titleid`),
   ADD KEY `name` (`name`);
 COMMIT;

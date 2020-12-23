@@ -14,7 +14,7 @@ $db = getDatabase();
 
 header("Content-Type: application/json");
 
-$_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin$_SERVER[HTTP_HOST]/";
+$_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin$_SERVER[HTTP_HOST]";
 //Parsing URL
 $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'])['path'])));
 
@@ -31,6 +31,7 @@ if(!empty($_path[0])){
             $games = $db->select("t_games_url",['url', 'filename','titleid', 'fileSize'],['AND'=>['folder'=>$folder,'shared'=>1],'ORDER'=>['title'=>'ASC']]);
             foreach($games as $game){
                 if(!empty($game['filename']) && !empty($game['titleid'])){
+                    // if start with http
                     if(substr($game['url'],0,4)=='http'){
                         if($game['fileSize']>0){
                             $json[] = [
@@ -39,6 +40,16 @@ if(!empty($_path[0])){
                             ];
                         }else{
                             $json[] = $game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
+                        }
+                    // if start with / add url
+                    }else if(substr($game['url'],0,1)=='/'){
+                        if($game['fileSize']>0){
+                            $json[] = [
+                                'url'=>$_host.$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
+                                'size'=>intval($game['fileSize'])
+                            ];
+                        }else{
+                            $json[] = $_host.$game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
                         }
                     }else{
                         if($game['fileSize']>0){
@@ -53,7 +64,7 @@ if(!empty($_path[0])){
                 }
             }
             file_put_contents($cacheFile ,json_encode(['total'=>count($json),'files'=>$json]));
-            echo json_encode(['total'=>count($json),'files'=>$json]);
+            echo json_encode(['total'=>count($json),'files'=>$json,'data'=> $games]);
         }
         die();
     }
@@ -65,7 +76,7 @@ $json = [
 ];
 
 foreach($folders as $folder){
-    $json['locations'][] = $_host.$folder['folder'];
+    $json['locations'][] = $_host."/".$folder['folder'];
 }
 
 echo json_encode($json);
