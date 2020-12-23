@@ -37,7 +37,7 @@ all script need to run from command line, except Google login. need to run from 
 ![example 2](import/folder.example.txt.2.png)
 - run **`php drive2db.php`** it will start importing file id from google drive
 - now add url to tinfoil in your switch
-- **`file2db.php`** not yet created, it will scan folder **data/games`** to database.
+- **`file2db.php`** will scan game inside folder **data/games`** to database. you can upload your games file to this folder,
 
 ## other files
 

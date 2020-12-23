@@ -35,7 +35,7 @@ foreach($drives as $drive){
         if($item['fileExtension']=='nsz' || $item['fileExtension']=='xci'){
             if($item['parents'][0]['id'] == $idfolder && !empty($item['title'])){
                 $gameid = getGameID($item['title']);
-                $gameName = $db->get("t_switch","name",['titleid'=>$gameid]);
+                $gameName = $db->get("t_games","name",['titleid'=>$gameid]);
                 if(empty($gameName)) $gameName = str_replace([".xci",".nsp",".nsz"],"",$item['title']);
                 $db->insert('t_games_url',[
                     'url'=>$item['id'],

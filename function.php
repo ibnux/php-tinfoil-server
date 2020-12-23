@@ -23,27 +23,31 @@ function getDatabase(){
             'database_file' => $dbpath
         ]);
         if($nodb){
-            $db->exec("CREATE TABLE `t_games_url` (
-                `nomor` int(11) PRIMARY KEY,
-                `url` varchar(128) UNIQUE,
-                `filename` varchar(256) DEFAULT '',
-                `title` varchar(256) DEFAULT '',
-                `titleid` varchar(16) DEFAULT '',
-                `fileSize` varchar(128) DEFAULT '0',
-                `md5Checksum` varchar(64) DEFAULT '',
-                `folder` varchar(32) DEFAULT '',
-                `root` varchar(64) DEFAULT '',
-                `owner` varchar(64) DEFAULT '',
-                `shared` tinyint(1) DEFAULT '1')");
-            $db->exec("CREATE TABLE `t_games` (
-                `titleid` varchar(16) NOT NULL,
-                `name` varchar(256) NOT NULL,
-                `image` varchar(512) NOT NULL DEFAULT '',
-                `description` text NOT NULL,
-                `publisher` varchar(64) NOT NULL,
-                `languages` varchar(256) NOT NULL,
-                `rating` tinyint(1) NOT NULL DEFAULT '0',
-                `size` varchar(16) NOT NULL)");
+            $db->exec("CREATE TABLE t_games_url (
+                nomor       INTEGER       PRIMARY KEY AUTOINCREMENT,
+                url         VARCHAR (128) UNIQUE,
+                filename    VARCHAR (256) DEFAULT '',
+                title       VARCHAR (256) DEFAULT '',
+                titleid     VARCHAR (16)  DEFAULT '',
+                fileSize    VARCHAR (128) DEFAULT '0',
+                md5Checksum VARCHAR (64)  DEFAULT '',
+                folder      VARCHAR (32)  DEFAULT '',
+                root        VARCHAR (64)  DEFAULT '',
+                owner       VARCHAR (64)  DEFAULT '',
+                shared      TINYINT (1)   DEFAULT '1'
+            );");
+            $db->exec("CREATE TABLE t_games (
+                titleid     VARCHAR (16)  NOT NULL,
+                name        VARCHAR (256) NOT NULL,
+                image       VARCHAR (512) NOT NULL
+                                          DEFAULT '',
+                description TEXT          NOT NULL,
+                publisher   VARCHAR (64)  NOT NULL,
+                languages   VARCHAR (256) NOT NULL,
+                rating      TINYINT (1)   NOT NULL
+                                          DEFAULT '0',
+                size        VARCHAR (16)  NOT NULL
+            );");
         }
         return $db;
     }
