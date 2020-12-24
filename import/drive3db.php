@@ -33,35 +33,39 @@ foreach($drives as $drive){
     $list =  listFolder($idfolder,$pageToken);
 
     foreach($list['items'] as $itm){
-        $item = getFile($itm['id']);
-        if($item['fileExtension']=='nsz' || $item['fileExtension']=='xci'){
-            if($item['parents'][0]['id'] == $idfolder && !empty($item['name'])){
-                $gameid = getGameID($item['name']);
-                $gameName = $db->get("t_games","name",['titleid'=>$gameid]);
-                if(empty($gameName)) $gameName = str_replace([".xci",".nsp",".nsz"],"",$item['name']);
-                $db->insert('t_games_url',[
-                    'url'=>$item['id'],
-                    'filename'=>$item['name'],
-                    'title'=>$gameName,
-                    'titleid'=>$gameid,
-                    'fileSize'=>$item['size'],
-                    'md5Checksum'=>$item['md5Checksum'],
-                    'root'=>$idfolder,
-                    'owner'=>trim($item['driveId']),
-                    'folder'=>$folder,
-                    'shared'=>($item['viewersCanCopyContent'])?"1":"0",
-                    ]);
-                $id = $db->id();
-                if($id){
-                    echo $db->id()." - ".$item['name']."\n";
+        if(!$db->has("t_games_url",['url'=>$itm['id']])){
+            $item = getFile($itm['id']);
+            if($item['fileExtension']=='nsz' || $item['fileExtension']=='xci'){
+                if($item['parents'][0] == $idfolder && !empty($item['name'])){
+                    $gameid = getGameID($item['name']);
+                    $gameName = $db->get("t_games","name",['titleid'=>$gameid]);
+                    if(empty($gameName)) $gameName = str_replace([".xci",".nsp",".nsz"],"",$item['name']);
+                    $db->insert('t_games_url',[
+                        'url'=>$item['id'],
+                        'filename'=>$item['name'],
+                        'title'=>$gameName,
+                        'titleid'=>$gameid,
+                        'fileSize'=>$item['size'],
+                        'md5Checksum'=>$item['md5Checksum'],
+                        'root'=>$idfolder,
+                        'owner'=>trim($item['driveId']),
+                        'folder'=>$folder,
+                        'shared'=>($item['viewersCanCopyContent'])?"1":"0",
+                        ]);
+                    $id = $db->id();
+                    if($id){
+                        echo $db->id()." - ".$item['name']."\n";
+                    }else{
+                        echo json_encode($db->error())."\n".$item['name']."\n";
+                    }
                 }else{
-                    echo json_encode($db->error())."\n".$item['name']."\n";
+                    echo "Parents different ".$item['parents'][0]['id']."\n";
                 }
             }else{
-                echo "Parents different ".$item['parents'][0]['id']."\n";
+                echo "NOT XCI/NSZ - ".$item['name']."\n";
             }
         }else{
-            echo "NOT XCI/NSZ - ".$item['name']."\n";
+            echo $itm['id']." EXISTS\n";
         }
     }
 
