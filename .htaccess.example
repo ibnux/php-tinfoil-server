@@ -29,3 +29,8 @@ ExpiresDefault "access 1 month"
 Order allow,deny
 Deny from all
 </Files>
+
+<Files ~ "\.txt$">
+Order allow,deny
+Deny from all
+</Files>
