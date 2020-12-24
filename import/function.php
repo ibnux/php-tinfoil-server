@@ -19,7 +19,7 @@ function updateToken(){
     curl_close($ch);
     $jsoncredential = json_decode($authToken,true);
     if(isset($jsoncredential['access_token'])){
-        file_put_contents("token/credentials.txt", $authToken);
+        file_put_contents("token/creds.txt", $authToken);
     }
 }
 
