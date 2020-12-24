@@ -32,7 +32,8 @@ foreach($drives as $drive){
 
     $list =  listFolder($idfolder,$pageToken);
 
-    foreach($list['items'] as $item){
+    foreach($list['items'] as $itm){
+        $item = getFile($itm['id']);
         if($item['fileExtension']=='nsz' || $item['fileExtension']=='xci'){
             if($item['parents'][0]['id'] == $idfolder && !empty($item['name'])){
                 $gameid = getGameID($item['name']);
