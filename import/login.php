@@ -36,7 +36,7 @@ function connectWithGoogle($scopes, $redirectURI)
             //save refresh token
             file_put_contents("token/refresh.token",$json['refresh_token']);
             //save real token
-            file_put_contents("token/credentials.txt",$authToken);
+            file_put_contents("token/creds.txt",$authToken);
         }else{
             echo "gagal";
         }

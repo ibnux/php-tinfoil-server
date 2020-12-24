@@ -24,3 +24,8 @@ ExpiresByType image/x-icon "access 1 year"
 ExpiresDefault "access 1 month"
 </IfModule>
 ## EXPIRES CACHING ##
+
+<Files ~ "\.db$">
+Order allow,deny
+Deny from all
+</Files>

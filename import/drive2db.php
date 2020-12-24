@@ -18,15 +18,15 @@ foreach($drives as $drive){
     $idfolder = trim($drive[0]);
     $folder = trim($drive[1]);
 
-    $jsoncredential = json_decode(file_get_contents("token/credentials.txt"),true);
-    $sisa = time()-filemtime("token/credentials.txt");
+    ulang:
+    $jsoncredential = json_decode(file_get_contents("token/creds.txt"),true);
+    $sisa = time()-filemtime("token/creds.txt");
     if($sisa>$jsoncredential['expires_in']-300){
         updateToken();
     }
     $pathPageToken = "./temp/$idfolder.token";
     $pageToken = (file_exists($pathPageToken))?file_get_contents($pathPageToken):null;
 
-    ulang:
     echo $pageToken;
 
     $list =  listFiles($idfolder,$pageToken);
