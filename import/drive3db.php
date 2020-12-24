@@ -1,8 +1,8 @@
 <?php
 /**
- * Import files inside google drive
+ * Import files inside google Team drive
  */
-echo "Import files inside google drive\n";
+echo "Import files inside google Team drive\n";
 include "../vendor/autoload.php";
 require '../config.php';
 require 'function.php';
@@ -30,37 +30,37 @@ foreach($drives as $drive){
 
     echo $pageToken;
 
-    $list =  listFiles($idfolder,$pageToken);
+    $list =  listFolder($idfolder,$pageToken);
 
     foreach($list['items'] as $item){
         if($item['fileExtension']=='nsz' || $item['fileExtension']=='xci'){
-            if($item['parents'][0]['id'] == $idfolder && !empty($item['title'])){
-                $gameid = getGameID($item['title']);
+            if($item['parents'][0]['id'] == $idfolder && !empty($item['name'])){
+                $gameid = getGameID($item['name']);
                 $gameName = $db->get("t_games","name",['titleid'=>$gameid]);
-                if(empty($gameName)) $gameName = str_replace([".xci",".nsp",".nsz"],"",$item['title']);
+                if(empty($gameName)) $gameName = str_replace([".xci",".nsp",".nsz"],"",$item['name']);
                 $db->insert('t_games_url',[
                     'url'=>$item['id'],
-                    'filename'=>$item['title'],
+                    'filename'=>$item['name'],
                     'title'=>$gameName,
                     'titleid'=>$gameid,
-                    'fileSize'=>$item['fileSize'],
+                    'fileSize'=>$item['size'],
                     'md5Checksum'=>$item['md5Checksum'],
                     'root'=>$idfolder,
-                    'owner'=>trim($item['owners'][0]['emailAddress']),
+                    'owner'=>trim($item['driveId']),
                     'folder'=>$folder,
-                    'shared'=>($item['shared'])?"1":"0",
+                    'shared'=>($item['viewersCanCopyContent'])?"1":"0",
                     ]);
                 $id = $db->id();
                 if($id){
-                    echo $db->id()." - ".$item['title']."\n";
+                    echo $db->id()." - ".$item['name']."\n";
                 }else{
-                    echo json_encode($db->error())."\n".$item['title']."\n";
+                    echo json_encode($db->error())."\n".$item['name']."\n";
                 }
             }else{
                 echo "Parents different ".$item['parents'][0]['id']."\n";
             }
         }else{
-            echo "NOT XCI/NSZ - ".$item['title']."\n";
+            echo "NOT XCI/NSZ - ".$item['name']."\n";
         }
     }
 
