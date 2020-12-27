@@ -40,3 +40,6 @@ $sms_server = "https://some.sms.server/sms.php?to={phone}&msg={message}";
 $msg_login_info = $_SERVER['HTTP_HOST'].' use your phone number (cth: 0812345678) as Username, password qwe, real password will be send to your phone number';
 $msg_pass_send  = "Password has been sent to your number";
 $msg_sms_text   = "Your Tinfoil Password: {{pin}}\n\nIgnore if you dont request password";
+
+// Google drive download url
+$drive_url = 'https://docs.google.com/uc?export=download&id=';
