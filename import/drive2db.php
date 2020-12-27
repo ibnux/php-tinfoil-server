@@ -11,7 +11,7 @@ $dbpath = '../'.$dbpath;
 require '../function.php';
 
 $db = getDatabase();
-
+updateToken();
 $drives = explode("\n",str_replace("\r","",file_get_contents("./folder.txt")));
 foreach($drives as $drive){
     echo "$drive\n";
