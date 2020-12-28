@@ -91,7 +91,7 @@ foreach ($drives as $drive) {
                         ]);
                         if ($db->has('t_games_url', ['url' => $item['id']])) {
                             $n++;
-                            echo "INSERTED " . $item['id'] . " - " . $item['name'] . "\n";
+                            echo "$n INSERTED " . $item['id'] . " - " . $item['name'] . "\n";
                         } else {
                             echo json_encode($db->error()) . "\n" . $item['name'] . "\n";
                         }

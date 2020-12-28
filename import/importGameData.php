@@ -9,8 +9,19 @@ include "../vendor/autoload.php";
 include "../config.php";
 $dbpath = '../'.$dbpath;
 include "../function.php";
-$db = getDatabase();
 
+if($dbtype=='mysql'){
+    echo "reCreate table? (y/n) : ";
+    $handle = fopen("php://stdin", "r");
+    $line = fgets($handle);
+    if (trim($line) == 'y') {
+        $db = getDatabase(true);
+    }else{
+        $db = getDatabase();
+    }
+}else{
+    $db = getDatabase();
+}
 #nswdb
 
 $xmls = (array)simplexml_load_string(file_get_contents('http://nswdb.com/xml.php'));
@@ -21,6 +32,7 @@ sleep(1);
 foreach ($releases as $release) {
     $data = (array) $release;
     $titleid = preg_replace("/[^a-zA-Z0-9]+/", "", $data['titleid']) . "";
+    $titleid = substr($titleid,0,16);
     $game = $db->get("t_games", ['titleid', 'size'], ['titleid' => $titleid]);
     if (empty($game)) {
         try {
@@ -35,8 +47,8 @@ foreach ($releases as $release) {
                 'rating' => "",
                 'size' => 0
             ]);
-            if($db->id()>0){
-                echo "INSERTED ".$data['name'] . " " . $db->id() . "\n";
+            if($db->has("t_games", ['titleid' => $titleid])){
+                echo "INSERTED ".$data['name'] . " " . $data['titleid'] . "\n";
             }else{
                 print_r($db->error());
             }
@@ -48,7 +60,7 @@ foreach ($releases as $release) {
     } else {
         if (empty($game['size'])) {
             $db->update("t_games", ['size' => $data['trimmedsize'] * 1], ['titleid' => $titleid]);
-            echo $titleid . " " . $data['trimmedsize'] . "\n";
+            echo "update ".$titleid . " " . $data['trimmedsize'] . "\n";
         }
     }
 }
