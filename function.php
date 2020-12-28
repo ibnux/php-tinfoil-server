@@ -14,6 +14,8 @@ function getDatabase($createTable = false){
         ]);
 
         if($createTable){
+            $db->exec("DROP TABLE IF EXISTS `t_games`;");
+            $db->exec("DROP TABLE IF EXISTS `t_games_url`;");
             $db->exec("CREATE TABLE t_games_url (
                 url         VARCHAR (128) PRIMARY KEY,
                 filename    VARCHAR (256) DEFAULT '',
