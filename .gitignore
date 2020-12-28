@@ -20,3 +20,4 @@ data/base.db
 import/temp/**
 !import/token/.htaccess
 !import/temp/.htaccess
+import/token/creds.txt

@@ -1,6 +1,0 @@
-{
-  "access_token": "ya29.a0AfH6SMDvxuB7wiy1whjWr-rA5C2861bwDlpS31cMc78kTp0uHPpc692FQFvPm9j9qMjPD6XQUe_7eRPzyDbcoW2-BuTBdGijd6I7Ur3dUES026MBV8TW9ErIKEXU1P7PzoHLC5BwGTLQjFUoE5yf4JP2StowHonFWr3POBorIDC4",
-  "expires_in": 3599,
-  "scope": "https://www.googleapis.com/auth/drive.apps.readonly https://www.googleapis.com/auth/drive.metadata.readonly",
-  "token_type": "Bearer"
-}
