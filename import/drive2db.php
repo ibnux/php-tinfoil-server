@@ -1,79 +1,134 @@
 <?php
+
 /**
  * Import files inside google drive
  */
+if (php_sapi_name() !== 'cli') {
+    die("Run only from CLI");
+}
 echo "Import files inside google drive\n";
 include "../vendor/autoload.php";
 require '../config.php';
 require 'function.php';
-
-$dbpath = '../'.$dbpath;
+$dbpath = '../' . $dbpath;
 require '../function.php';
+$cleanTabel = false;
+$cleanCache = false;
+
+if (in_array("table", $argv)) {
+    $cleanTabel = true;
+} else {
+    echo "Clean table before import? (y/n) : ";
+    $handle = fopen("php://stdin", "r");
+    $line = fgets($handle);
+    if (trim($line) == 'y') {
+        $cleanTabel = true;
+        echo "Clean table $line";
+    }
+}
+
+if (in_array("cache", $argv)) {
+    $cleanCache = true;
+} else {
+    echo "Clean cache after import? (y/n) : ";
+    $handle = fopen("php://stdin", "r");
+    $line = fgets($handle);
+    if (trim($line) == 'y') {
+        $cleanCache = true;
+        echo "Clean cache $line";
+    }
+}
 
 $db = getDatabase();
-
-$drives = explode("\n",str_replace("\r","",file_get_contents("./folder.txt")));
-foreach($drives as $drive){
+if ($cleanTabel) {
+    $db->exec("DELETE FROM t_games_url");
+    echo "TABLE count " . $db->count("t_games_url") . " lines\n";
+}
+updateToken();
+$drives = explode("\n", str_replace("\r", "", file_get_contents("./folder.txt")));
+$n = 0;
+foreach ($drives as $drive) {
     echo "$drive\n";
-    $drive = explode(" ",$drive);
-    $idfolder = trim($drive[0]);
-    $folder = trim($drive[1]);
+    $drive = explode(" ", $drive);
+    if (count($drive) >= 2) {
+        $idfolder = trim($drive[0]);
+        $folder = trim($drive[1]);
 
-    ulang:
-    $jsoncredential = json_decode(file_get_contents("token/creds.txt"),true);
-    $sisa = time()-filemtime("token/creds.txt");
-    if($sisa>$jsoncredential['expires_in']-300){
-        updateToken();
-    }
-    $pathPageToken = "./temp/$idfolder.token";
-    $pageToken = (file_exists($pathPageToken))?file_get_contents($pathPageToken):null;
+        ulang:
+        $jsoncredential = json_decode(file_get_contents("token/creds.txt"), true);
+        $sisa = time() - filemtime("token/creds.txt");
+        if ($sisa > $jsoncredential['expires_in'] - 300) {
+            updateToken();
+        }
+        $pathPageToken = "./temp/$idfolder.2.token";
+        $pageToken = (file_exists($pathPageToken)) ? file_get_contents($pathPageToken) : null;
 
-    echo $pageToken;
+        echo $pageToken;
 
-    $list =  listFiles($idfolder,$pageToken);
+        $list =  listFiles($idfolder, $pageToken);
 
-    foreach($list['items'] as $item){
-        if($item['fileExtension']=='nsz' || $item['fileExtension']=='xci'){
-            if($item['parents'][0]['id'] == $idfolder && !empty($item['title'])){
-                $gameid = getGameID($item['title']);
-                $gameName = $db->get("t_games","name",['titleid'=>$gameid]);
-                if(empty($gameName)) $gameName = str_replace([".xci",".nsp",".nsz"],"",$item['title']);
-                $db->insert('t_games_url',[
-                    'url'=>$item['id'],
-                    'filename'=>$item['title'],
-                    'title'=>$gameName,
-                    'titleid'=>$gameid,
-                    'fileSize'=>$item['fileSize'],
-                    'md5Checksum'=>$item['md5Checksum'],
-                    'root'=>$idfolder,
-                    'owner'=>trim($item['owners'][0]['emailAddress']),
-                    'folder'=>$folder,
-                    'shared'=>($item['shared'])?"1":"0",
-                    ]);
-                $id = $db->id();
-                if($id){
-                    echo $db->id()." - ".$item['title']."\n";
-                }else{
-                    echo json_encode($db->error())."\n".$item['title']."\n";
+        foreach ($list['items'] as $item) {
+            if (!$db->has('t_games_url', ['url' => $item['id']])) {
+                if ($item['fileExtension'] == 'nsz' || $item['fileExtension'] == 'xci') {
+                    if ($item['parents'][0]['id'] == $idfolder && !empty($item['title'])) {
+                        $gameid = getGameID($item['title']);
+                        $gameName = $db->get("t_games", "name", ['titleid' => $gameid]);
+                        if (empty($gameName)) $gameName = str_replace([".xci", ".nsp", ".nsz"], "", $item['title']);
+
+                        $db->insert('t_games_url', [
+                            'url' => $item['id'],
+                            'filename' => $item['title'],
+                            'title' => $gameName,
+                            'titleid' => $gameid,
+                            'fileSize' => $item['fileSize'],
+                            'md5Checksum' => $item['md5Checksum'],
+                            'root' => $idfolder,
+                            'owner' => trim($item['owners'][0]['emailAddress']),
+                            'folder' => $folder,
+                            'shared' => ($item['shared']) ? "1" : "0",
+                        ]);
+                        if ($db->has('t_games_url', ['url' => $item['id']])) {
+                            $n++;
+                            echo "INSERTED " . $item['id'] . " - " . $item['title'] . "\n";
+                        } else {
+                            echo json_encode($db->error()) . "\n" . $item['title'] . "\n";
+                        }
+                    } else {
+                        echo "Parents different " . $item['parents'][0]['id'] . "\n";
+                    }
+                } else {
+                    echo "NOT XCI/NSZ\n";
+                    print_r($item);
                 }
-            }else{
-                echo "Parents different ".$item['parents'][0]['id']."\n";
+            } else {
+                echo "EXISTS " . $item['id'] . " - " . $item['title'] . "\n";
             }
-        }else{
-            echo "NOT XCI/NSZ - ".$item['title']."\n";
+        }
+
+
+        if (isset($list['nextLink']) && !empty($list['nextLink'])) {
+            $pageToken = $list['nextLink'];
+            file_put_contents("$pathPageToken", $pageToken);
+            if (!empty($pageToken))
+                goto ulang;
+            else die("EMPTY $idfolder");
+        }
+
+        if(file_exists($pathPageToken))unlink($pathPageToken);
+        echo "$idfolder FINISH\n\n";
+    }
+}
+echo "$n games inserted\n";
+
+if ($cleanCache) {
+    $files = scandir("../cache/");
+    foreach ($files as $file) {
+        if (pathinfo($file, PATHINFO_EXTENSION) == 'json') {
+            unlink("../cache/$file");
+            echo "DELETE CACHE ../cache/$file\n";
         }
     }
-
-
-    if(isset($list['nextLink']) && !empty($list['nextLink'])){
-        $pageToken = $list['nextLink'];
-        file_put_contents("$pathPageToken",$pageToken);
-        if(!empty($pageToken))
-            goto ulang;
-        else die("EMPTY $idfolder");
-    }
-
-    file_put_contents("$pathPageToken",'');
-    echo "$idfolder FINISH\n\n";
+}else{
+    echo "\n\nDONT FORGET TO RUN clean.php from browser\n\n";
 }
-echo "\n\nDONT FORGET TO RUN clean.php from browser\n\n";
+if ($dbtype == "sqlite") $db->exec("VACUUM");

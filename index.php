@@ -19,6 +19,11 @@ if(!isset($url_server)){
 }else{
     $_host = $url_server;
 }
+
+if(empty($drive_url)){
+    $drive_url = 'https://docs.google.com/uc?export=download&id=';
+}
+
     //Parsing URL
 $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'])['path'])));
 
@@ -58,11 +63,11 @@ if(!empty($_path[0])){
                     }else{
                         if($game['fileSize']>0){
                             $json[] = [
-                                'url'=>'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
+                                'url'=>$drive_url.$game['url'].'#'.urlencode(str_replace('#','',$game['filename'])),
                                 'size'=>intval($game['fileSize'])
                             ];
                         }else{
-                            $json[] = 'https://docs.google.com/uc?export=download&id='.$game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
+                            $json[] = $drive_url.$game['url'].'#'.urlencode(str_replace('#','',$game['filename']));
                         }
                     }
                 }

@@ -2,6 +2,9 @@
 /**
  * Just run from Commandline php importGameData.php
  */
+if(php_sapi_name() !== 'cli'){
+    die("Run only from CLI");
+}
 include "../vendor/autoload.php";
 include "../config.php";
 $dbpath = '../'.$dbpath;

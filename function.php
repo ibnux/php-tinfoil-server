@@ -24,8 +24,7 @@ function getDatabase(){
         ]);
         if($nodb){
             $db->exec("CREATE TABLE t_games_url (
-                nomor       INTEGER       PRIMARY KEY AUTOINCREMENT,
-                url         VARCHAR (128) UNIQUE,
+                url         VARCHAR (128) PRIMARY KEY,
                 filename    VARCHAR (256) DEFAULT '',
                 title       VARCHAR (256) DEFAULT '',
                 titleid     VARCHAR (16)  DEFAULT '',
@@ -37,7 +36,7 @@ function getDatabase(){
                 shared      TINYINT (1)   DEFAULT '1'
             );");
             $db->exec("CREATE TABLE t_games (
-                titleid     VARCHAR (16)  NOT NULL,
+                titleid     VARCHAR (16)  PRIMARY KEY NOT NULL,
                 name        VARCHAR (256) NOT NULL,
                 image       VARCHAR (512) NOT NULL
                                           DEFAULT '',
