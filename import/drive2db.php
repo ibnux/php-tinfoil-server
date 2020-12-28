@@ -60,7 +60,7 @@ foreach ($drives as $drive) {
         if ($sisa > $jsoncredential['expires_in'] - 300) {
             updateToken();
         }
-        $pathPageToken = "./temp/$idfolder.token";
+        $pathPageToken = "./temp/$idfolder.2.token";
         $pageToken = (file_exists($pathPageToken)) ? file_get_contents($pathPageToken) : null;
 
         echo $pageToken;
@@ -114,7 +114,7 @@ foreach ($drives as $drive) {
             else die("EMPTY $idfolder");
         }
 
-        file_put_contents("$pathPageToken", '');
+        if(file_exists($pathPageToken))unlink($pathPageToken);
         echo "$idfolder FINISH\n\n";
     }
 }

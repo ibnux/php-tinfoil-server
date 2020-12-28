@@ -15,28 +15,29 @@ $dbpath = '../' . $dbpath;
 require '../function.php';
 $cleanTabel = false;
 $cleanCache = false;
-
-if (in_array("table", $argv)) {
-    $cleanTabel = true;
-} else {
-    echo "Clean table before import? (y/n) : ";
-    $handle = fopen("php://stdin", "r");
-    $line = fgets($handle);
-    if (trim($line) == 'y') {
+if (!in_array("noclean", $argv)) {
+    if (in_array("table", $argv)) {
         $cleanTabel = true;
-        echo "Clean table $line";
+    } else {
+        echo "Clean table before import? (y/n) : ";
+        $handle = fopen("php://stdin", "r");
+        $line = fgets($handle);
+        if (trim($line) == 'y') {
+            $cleanTabel = true;
+            echo "Clean table $line";
+        }
     }
-}
 
-if (in_array("cache", $argv)) {
-    $cleanCache = true;
-} else {
-    echo "Clean cache after import? (y/n) : ";
-    $handle = fopen("php://stdin", "r");
-    $line = fgets($handle);
-    if (trim($line) == 'y') {
+    if (in_array("cache", $argv)) {
         $cleanCache = true;
-        echo "Clean cache $line";
+    } else {
+        echo "Clean cache after import? (y/n) : ";
+        $handle = fopen("php://stdin", "r");
+        $line = fgets($handle);
+        if (trim($line) == 'y') {
+            $cleanCache = true;
+            echo "Clean cache $line";
+        }
     }
 }
 
@@ -61,7 +62,7 @@ foreach ($drives as $drive) {
         if ($sisa > $jsoncredential['expires_in'] - 300) {
             updateToken();
         }
-        $pathPageToken = "./temp/$idfolder.token";
+        $pathPageToken = "./temp/$idfolder.3.token";
         $pageToken = (file_exists($pathPageToken)) ? file_get_contents($pathPageToken) : null;
 
         echo $pageToken;
@@ -114,7 +115,7 @@ foreach ($drives as $drive) {
             else die("EMPTY $idfolder");
         }
 
-        file_put_contents("$pathPageToken", '');
+        if(file_exists($pathPageToken))unlink($pathPageToken);
         echo "$idfolder FINISH\n\n";
     }
 }
