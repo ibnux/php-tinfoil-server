@@ -72,7 +72,7 @@ foreach($folders as $folder){
                         ]);
                     if ($db->has('t_games_url', ['url' => $link])) {
                         $n++;
-                        echo $gameid." - ".$file."\n";
+                        echo "$n $gameid INSERT - ".$file."\n";
                     }else{
                         echo json_encode($db->error())."\n".$file."\n";
                     }
