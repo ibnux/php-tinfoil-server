@@ -124,8 +124,8 @@ foreach ($drives as $drive) {
         }
 
 
-        if (isset($list['nextLink']) && !empty($list['nextLink'])) {
-            $pageToken = $list['nextLink'];
+        if (isset($list['nextPageToken']) && !empty($list['nextPageToken'])) {
+            $pageToken = $list['nextPageToken'];
             file_put_contents("$pathPageToken", $pageToken);
             if (!empty($pageToken))
                 goto ulang;

@@ -27,7 +27,7 @@ function updateToken(){
 function listFiles($folderID,$nextToken=null){
     global $jsoncredential;
     if(!empty($nextToken)){
-        $url = $nextToken;
+        $url = 'https://www.googleapis.com/drive/v3/files?q=\''.$folderID.'\'+in+parents&includeItemsFromAllDrives=true&supportsAllDrives=true&fields=*&pageToken='.$nextToken ;
     }else{
         $url = 'https://www.googleapis.com/drive/v3/files?q=\''.$folderID.'\'+in+parents&includeItemsFromAllDrives=true&supportsAllDrives=true&fields=*' ;
     }
