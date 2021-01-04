@@ -67,47 +67,65 @@ foreach ($drives as $drive) {
 
         $list =  listFiles($idfolder, $pageToken);
 
-        foreach ($list['items'] as $item) {
+        foreach ($list['files'] as $item) {
             if (!$db->has('t_games_url', ['url' => $item['id']])) {
                 if ($item['fileExtension'] == 'nsz' || $item['fileExtension'] == 'xci') {
-                    if ($item['parents'][0]['id'] == $idfolder && !empty($item['title'])) {
-                        $gameid = getGameID($item['title']);
-                        $gameName = $db->get("t_games", "name", ['titleid' => $gameid]);
-                        if (empty($gameName)) $gameName = str_replace([".xci", ".nsp", ".nsz"], "", $item['title']);
-
-                        $db->insert('t_games_url', [
-                            'url' => $item['id'],
-                            'filename' => $item['title'],
-                            'title' => $gameName,
-                            'titleid' => $gameid,
-                            'fileSize' => $item['fileSize'],
-                            'md5Checksum' => $item['md5Checksum'],
-                            'root' => $idfolder,
-                            'owner' => trim($item['owners'][0]['emailAddress']),
-                            'folder' => $folder,
-                            'shared' => ($item['shared']) ? "1" : "0",
-                        ]);
+                    if ($item['parents'][0] == $idfolder && !empty($item['name'])) {
+                        $gameid = getGameID($item['name']);
+                        $games = $db->get("t_games", ["name",'size'], ['titleid' => $gameid]);
+                        $gameName = $games['name'];
+                        if($item['size']==0){
+                            $item['size'] = $games['size']*1;
+                        }
+                        if (empty($gameName)) $gameName = str_replace([".xci", ".nsp", ".nsz"], "", $item['name']);
+                        if(empty($item['driveId'])){
+                            $db->insert('t_games_url', [
+                                'url' => $item['id'],
+                                'filename' => $item['name'],
+                                'title' => $gameName,
+                                'titleid' => $gameid,
+                                'fileSize' => $item['size'],
+                                'md5Checksum' => $item['md5Checksum'],
+                                'root' => $idfolder,
+                                'owner' => trim($item['owners'][0]['emailAddress']),
+                                'folder' => $folder,
+                                'shared' => ($item['shared']) ? "1" : "0",
+                            ]);
+                        }else{
+                            $db->insert('t_games_url', [
+                                'url' => $item['id'],
+                                'filename' => $item['name'],
+                                'title' => $gameName,
+                                'titleid' => $gameid,
+                                'fileSize' => $item['size'],
+                                'md5Checksum' => $item['md5Checksum'],
+                                'root' => $idfolder,
+                                'owner' => $item['driveId'],
+                                'folder' => $folder,
+                                'shared' => (in_array("anyoneWithLink",$item['permissionIds'])) ? "1" : "0",
+                            ]);
+                        }
                         if ($db->has('t_games_url', ['url' => $item['id']])) {
                             $n++;
-                            echo "$n INSERTED " . $item['id'] . " - " . $item['title'] . "\n";
+                            echo "$n INSERTED " . $item['id'] . " - " . $item['name'] . "\n";
                         } else {
-                            echo json_encode($db->error()) . "\n" . $item['title'] . "\n";
+                            echo json_encode($db->error()) . "\n" . $item['name'] . "\n";
                         }
                     } else {
-                        echo "Parents different " . $item['parents'][0]['id'] . "\n";
+                        echo "Parents different " . $item['parents'][0] . "\n";
                     }
                 } else {
                     echo "NOT XCI/NSZ\n";
                     print_r($item);
                 }
             } else {
-                echo "EXISTS " . $item['id'] . " - " . $item['title'] . "\n";
+                echo "EXISTS " . $item['id'] . " - " . $item['name'] . "\n";
             }
         }
 
 
-        if (isset($list['nextLink']) && !empty($list['nextLink'])) {
-            $pageToken = $list['nextLink'];
+        if (isset($list['nextPageToken']) && !empty($list['nextPageToken'])) {
+            $pageToken = $list['nextPageToken'];
             file_put_contents("$pathPageToken", $pageToken);
             if (!empty($pageToken))
                 goto ulang;
