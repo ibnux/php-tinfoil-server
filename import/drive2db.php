@@ -66,10 +66,10 @@ foreach ($drives as $drive) {
         echo $pageToken;
 
         $list =  listFiles($idfolder, $pageToken);
-
+        $allowed_ext = ['xci','nsp','nsz'];
         foreach ($list['files'] as $item) {
             if (!$db->has('t_games_url', ['url' => $item['id']])) {
-                if ($item['fileExtension'] == 'nsz' || $item['fileExtension'] == 'xci') {
+                if (in_array($item['fileExtension'],$allowed_ext)) {
                     if ($item['parents'][0] == $idfolder && !empty($item['name'])) {
                         $gameid = getGameID($item['name']);
                         $games = $db->get("t_games", ["name",'size'], ['titleid' => $gameid]);
