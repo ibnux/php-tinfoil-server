@@ -82,36 +82,43 @@ function getDatabase($createTable = false){
 }
 
 function require_auth() {
-    global $msg_pass_send,$msg_login_info,$msg_sms_text;
+    global $msg_pass_send,$msg_login_info,$msg_sms_text,$phone_country ;
     header('Cache-Control: no-cache, must-revalidate, max-age=0');
     $pesan = $msg_login_info;
     $is_not_authenticated = true;
     if(!empty($_SERVER['PHP_AUTH_USER'])){
         $phone = alphanumeric($_SERVER['PHP_AUTH_USER']);
-        $pathUser = "./data/user/".md5($phone).".user";
-        if(empty($_SERVER['PHP_AUTH_PW'])){
-            if(file_exists($pathUser)){
-                $pin = file_get_contents($pathUser);
-            }else{
-                $pin = rand(1000,9999);
-                file_put_contents($pathUser,$pin);
-            }
-            $pesan = $msg_pass_send;
-            sendSMS($phone,str_replace("{{pin}}",$pin,$msg_sms_text));
-        }else{
-            if(file_exists($pathUser)){
-                $pin = file_get_contents($pathUser);
-                if($pin!=$_SERVER['PHP_AUTH_PW']){
+        if(strlen($phone)>5){
+            $cncode = substr($phone,0,2);
+            if(count($phone_country)==0 || in_array($cncode,$phone_country)){
+                $pathUser = "./data/user/".md5($phone).".user";
+                if(empty($_SERVER['PHP_AUTH_PW'])){
+                    if(file_exists($pathUser)){
+                        $pin = file_get_contents($pathUser);
+                    }else{
+                        $pin = rand(1000,9999);
+                        file_put_contents($pathUser,$pin);
+                    }
                     $pesan = $msg_pass_send;
                     sendSMS($phone,str_replace("{{pin}}",$pin,$msg_sms_text));
                 }else{
-                    $is_not_authenticated = false;
+                    if(file_exists($pathUser)){
+                        $pin = file_get_contents($pathUser);
+                        if($pin!=$_SERVER['PHP_AUTH_PW']){
+                            $pesan = $msg_pass_send;
+                            sendSMS($phone,str_replace("{{pin}}",$pin,$msg_sms_text));
+                        }else{
+                            $is_not_authenticated = false;
+                        }
+                    }else{
+                        $pin = rand(1000,9999);
+                        file_put_contents($pathUser,$pin);
+                        $pesan = $msg_pass_send;
+                        sendSMS($phone,str_replace("{{pin}}",$pin,$msg_sms_text));
+                    }
                 }
             }else{
-                $pin = rand(1000,9999);
-                file_put_contents($pathUser,$pin);
-                $pesan = $msg_pass_send;
-                sendSMS($phone,str_replace("{{pin}}",$pin,$msg_sms_text));
+                $pesan = "Only for Phone number with prefix ". implode(",",$phone_country);
             }
         }
     }
