@@ -45,3 +45,6 @@ $msg_sms_text   = "Your Tinfoil Password: {{pin}}\n\nIgnore if you dont request 
 
 // Google drive download url
 $drive_url = 'https://docs.google.com/uc?export=download&id=';
+
+// allowed phone number for auth
+$phone_country = ['62','08'];
