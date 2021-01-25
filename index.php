@@ -12,7 +12,6 @@ if($must_login){
 
 $db = getDatabase();
 
-header("Content-Type: application/json");
 
 if(!isset($url_server)){
     $_host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$pin$_SERVER[HTTP_HOST]";
@@ -27,14 +26,25 @@ if(empty($drive_url)){
     //Parsing URL
 $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'])['path'])));
 
-if(!empty($_path[0])){
+if($_path[0]=='auth'){
+    $u = alphanumeric($_path[1]);
+    $p = alphanumeric($_path[2]);
+    $pin = file_get_contents("./data/user/$u.user");
+    if(md5($pin)==$p){
+        echo "true";
+    }else{
+        echo "false";
+    }
+    die();
+}else if(!empty($_path[0])){
+    header("Content-Type: application/json");
     $folder = alphanumeric($_path[0]);
     if($db->has("t_games_url",['folder'=>$folder])){
         header('Content-Disposition: filename="'.$folder.'.json"');
         $cacheFile = "./cache/".md5($folder.$dbpass).".json";
 
-        if(file_exists($cacheFile )){
-            readfile($cacheFile );
+        if(file_exists($cacheFile)){
+            readfile($cacheFile);
         }else{
             $json = array();
             $games = $db->select("t_games_url",['url', 'filename','titleid', 'fileSize'],['AND'=>['folder'=>$folder,'shared'=>1],'ORDER'=>['title'=>'ASC']]);
@@ -78,6 +88,7 @@ if(!empty($_path[0])){
         die();
     }
 }
+header("Content-Type: application/json");
 
 $folders = $db->select("t_games_url", ['folder'=>Medoo::raw('DISTINCT folder')]);
 $json = [
