@@ -4,11 +4,7 @@ require 'config.php';
 require 'function.php';
 use Medoo\Medoo;
 
-if($must_login){
-    $pin = require_auth()."@";
-}else{
-    $pin = "";
-}
+
 
 $db = getDatabase();
 
@@ -36,7 +32,15 @@ if($_path[0]=='auth'){
         echo "false";
     }
     die();
-}else if(!empty($_path[0])){
+}
+
+if($must_login){
+    $pin = require_auth()."@";
+}else{
+    $pin = "";
+}
+
+if(!empty($_path[0])){
     header("Content-Type: application/json");
     $folder = alphanumeric($_path[0]);
     if($db->has("t_games_url",['folder'=>$folder])){
