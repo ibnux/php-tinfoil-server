@@ -25,9 +25,13 @@ $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'
 if($_path[0]=='auth'){
     $u = alphanumeric($_path[1]);
     $p = alphanumeric($_path[2]);
-    $pin = file_get_contents("./data/user/$u.user");
-    if(md5($pin)==$p){
-        echo "true";
+    if(file_exists("./data/user/$u.user")){
+        $pin = file_get_contents("./data/user/".md5($u).".user");
+        if(md5($pin)==$p){
+            echo "true";
+        }else{
+            echo "false";
+        }
     }else{
         echo "false";
     }
