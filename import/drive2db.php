@@ -89,7 +89,7 @@ foreach ($drives as $drive) {
                                 'root' => $idfolder,
                                 'owner' => trim($item['owners'][0]['emailAddress']),
                                 'folder' => $folder,
-                                'shared' => ($item['shared']) ? "1" : "0",
+                                'shared' => 1, // user must share it
                             ]);
                         }else{
                             $db->insert('t_games_url', [
@@ -102,7 +102,7 @@ foreach ($drives as $drive) {
                                 'root' => $idfolder,
                                 'owner' => $item['driveId'],
                                 'folder' => $folder,
-                                'shared' => (in_array("anyoneWithLink",$item['permissionIds'])) ? "1" : "0",
+                                'shared' => 1, // user must share it
                             ]);
                         }
                         if ($db->has('t_games_url', ['url' => $item['id']])) {
