@@ -18,8 +18,8 @@ data/games/xci/**
 import/folder.txt
 data/base.db
 import/temp/**
+import/token/**
 !import/token/.htaccess
 !import/temp/.htaccess
-import/token/creds.txt
 import/test.php
 docker-compose.yml
