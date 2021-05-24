@@ -21,3 +21,5 @@ import/temp/**
 !import/token/.htaccess
 !import/temp/.htaccess
 import/token/creds.txt
+import/test.php
+docker-compose.yml
