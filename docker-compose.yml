@@ -1,9 +1,0 @@
-version: '3'
-services:
-    app:
-        build:
-            context: .
-            dockerfile: .docker/Dockerfile
-        image: php-tinfoil-docker
-        ports:
-            - 8880:80
