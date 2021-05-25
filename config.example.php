@@ -17,6 +17,7 @@ $dbpass = '##mysql';
 // SQLITE
 $dbpath = "data/base.db";
 
+//Message of The Day
 $motd   = "Use as needed, download only what you want to play, so you don't get to the limit quickly. Have a Google Drive to share too? mention t.me/ibnux | donate paypal.me/ibnux";
 
 $must_login = false;
@@ -26,12 +27,12 @@ $must_login = false;
 // https://www.iperiusbackup.net/en/how-to-enable-google-drive-api-and-get-client-credentials/
 // but in OAuth consent screen, just select internal, for your own use only, if it can be selected
 // i share my conf, bas364 only to make google not notify me
-$client_id = base64_decode("MTAyMDU3MDA2MzIwMS11Ymt2ZGM4bzNmMXNxOWl0N2pjOG9vZjQxazBoaDF2Zy5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbQ==");
-$client_sc = base64_decode("cm5hTTdMQ1E1TjRYdVVYakZ0aFJBN2F6");
+$client_id = "";
+$client_sc = "";
 $scopes = [ 'https://www.googleapis.com/auth/drive.apps.readonly'];
 
 // ADD REDIRECT To Credential API
-$redirect = "http://".$_SERVER['HTTP_HOST']."/import/login.php";
+$redirect = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") ."://".$_SERVER['HTTP_HOST']."/import/login.php";
 
 // END GOOGLE DRIVE AUTH CONFIGURATION
 
