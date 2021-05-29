@@ -28,6 +28,7 @@ if(empty($drive_url)){
 $_path = array_values(array_filter(explode("/", parse_url($_SERVER['REQUEST_URI'])['path'])));
 
 if(!empty($_path[0])){
+    $_path[0] = str_replace('.json','',$_path[0]);
     $folder = alphanumeric($_path[0]);
     if($db->has("t_games_url",['folder'=>$folder])){
         header('Content-Disposition: filename="'.$folder.'.json"');
