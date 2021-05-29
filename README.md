@@ -2,7 +2,7 @@
 
 ![PHP Tinfoil Server](php.tinfoil.server.jpg)
 
-This script only for Google drive link, not serving files.
+This script can serve Google Drive link, URL Files (No admin for inserting), or hosted files.
 
 based on [this documentation](https://blawar.github.io/tinfoil/custom_index/)
 
