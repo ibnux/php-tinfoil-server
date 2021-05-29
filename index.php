@@ -85,7 +85,7 @@ $json = [
 ];
 
 foreach($folders as $folder){
-    $json['locations'][] = $_host."/".$folder['folder']."/index.json';
+    $json['locations'][] = $_host."/".$folder['folder'].'/index.json';
 }
 
 echo json_encode($json);
