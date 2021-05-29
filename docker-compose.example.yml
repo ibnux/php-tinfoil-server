@@ -7,3 +7,9 @@ services:
         image: php-tinfoil-docker
         ports:
             - 8880:80
+        volumes:
+            - type: bind
+            source: /var/www/html/data/games
+            # change to folder games
+            target: ~/games/
+

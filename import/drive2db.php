@@ -15,6 +15,10 @@ require '../function.php';
 $cleanTabel = false;
 $cleanCache = false;
 
+updateToken();
+$jsoncredential = json_decode(file_get_contents("token/creds.txt"), true);
+$filemtime = filemtime("token/creds.txt");
+
 if (in_array("table", $argv)) {
     $cleanTabel = true;
 } else {
@@ -44,7 +48,7 @@ if ($cleanTabel) {
     $db->exec("DELETE FROM t_games_url");
     echo "TABLE count " . $db->count("t_games_url") . " lines\n";
 }
-updateToken();
+
 $drives = explode("\n", str_replace("\r", "", file_get_contents("./folder.txt")));
 $n = 0;
 foreach ($drives as $drive) {
@@ -53,18 +57,23 @@ foreach ($drives as $drive) {
     if (count($drive) >= 2) {
         $idfolder = trim($drive[0]);
         $folder = trim($drive[1]);
+        scanFolder($folder, $idfolder, $pageToken);
+        echo "$idfolder FINISH\n\n";
+    }
+}
+echo "$n games inserted\n";
 
-        ulang:
-        $jsoncredential = json_decode(file_get_contents("token/creds.txt"), true);
-        $sisa = time() - filemtime("token/creds.txt");
-        if ($sisa > $jsoncredential['expires_in'] - 300) {
+function scanFolder($folder, $idfolder, $pageToken){
+    global $db, $n, $filemtime, $jsoncredential ;
+    echo "SCANNING $idfolder FINISH\n\n";
+    while(true){
+        echo "remaining ".time()." - $filemtime = ".(time()-$filemtime)."\n";
+        if(time()-$filemtime>3400){
             updateToken();
+            $jsoncredential = json_decode(file_get_contents("token/creds.txt"), true);
+            $filemtime = filemtime("token/creds.txt");
         }
-        $pathPageToken = "./temp/$idfolder.2.token";
-        $pageToken = (file_exists($pathPageToken)) ? file_get_contents($pathPageToken) : null;
-
         echo $pageToken;
-
         $list =  listFiles($idfolder, $pageToken);
         $allowed_ext = ['xci','nsp','nsz'];
         foreach ($list['files'] as $item) {
@@ -89,7 +98,7 @@ foreach ($drives as $drive) {
                                 'root' => $idfolder,
                                 'owner' => trim($item['owners'][0]['emailAddress']),
                                 'folder' => $folder,
-                                'shared' => ($item['shared']) ? "1" : "0",
+                                'shared' => 1, // user must share it
                             ]);
                         }else{
                             $db->insert('t_games_url', [
@@ -102,7 +111,7 @@ foreach ($drives as $drive) {
                                 'root' => $idfolder,
                                 'owner' => $item['driveId'],
                                 'folder' => $folder,
-                                'shared' => (in_array("anyoneWithLink",$item['permissionIds'])) ? "1" : "0",
+                                'shared' => 1, // user must share it
                             ]);
                         }
                         if ($db->has('t_games_url', ['url' => $item['id']])) {
@@ -115,28 +124,32 @@ foreach ($drives as $drive) {
                         echo "Parents different " . $item['parents'][0] . "\n";
                     }
                 } else {
-                    echo "NOT XCI/NSZ\n";
-                    print_r($item);
+                    echo "NOT XCI/NSZ $item[mimeType]\n";
+                    //print_r($item);
+                    if($item['mimeType']=='application/vnd.google-apps.folder'){
+                        scanFolder($folder, $item['id'], null);
+                    }
                 }
             } else {
                 echo "EXISTS " . $item['id'] . " - " . $item['name'] . "\n";
             }
         }
-
-
-        if (isset($list['nextPageToken']) && !empty($list['nextPageToken'])) {
-            $pageToken = $list['nextPageToken'];
-            file_put_contents("$pathPageToken", $pageToken);
-            if (!empty($pageToken))
-                goto ulang;
-            else die("EMPTY $idfolder");
-        }
-
-        if(file_exists($pathPageToken))unlink($pathPageToken);
-        echo "$idfolder FINISH\n\n";
+        $pageToken = $list['nextPageToken'];
+        if(empty($pageToken)) break;
     }
+    // check subfolder
+    // $pageToken = null;
+    // while(!true){
+    //     $folders = listFolder($idfolder,$pageToken);
+    //     $pageToken = $folders['nextPageToken'];
+    //     foreach($folders['items'] as $fdr){
+    //         echo "subfolder scan $fdr[id] \n";
+    //         scanFolder($folder, $fdr['id'], null);
+    //     }
+    //     if(empty($pageToken)) break;
+    // }
+
 }
-echo "$n games inserted\n";
 
 if ($cleanCache) {
     $files = scandir("../cache/");

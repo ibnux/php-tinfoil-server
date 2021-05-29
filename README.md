@@ -30,17 +30,6 @@ if you enable login **$must_login = false;** you must use SMS Server or WhatsApp
 - it will start download game data
 - port will open on 8880
 
-## Import games from Google drive with my credentials
-
-i already add my own credentials
-
-- Share your folder to ![titofinance](titofinance.png)
-- start adding Folder ID to **`folder.txt`**
-![example 1](import/folder.example.txt.1.png)
-![example 2](import/folder.example.txt.2.png)
-- run **`php drive2db.php`** it will start importing file id from google drive
-- now add url to tinfoil in your switch
-
 ## Import games from Google drive with your own credentials
 
 all script need to run from command line, except Google login. need to run from browser.
