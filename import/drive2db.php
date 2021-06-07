@@ -2,6 +2,7 @@
 
 /**
  * Import files inside google drive
+ * Remove Duplicate
  */
 if (php_sapi_name() !== 'cli') {
     die("Run only from CLI");
@@ -64,7 +65,7 @@ foreach ($drives as $drive) {
 echo "$n games inserted\n";
 
 function scanFolder($folder, $idfolder, $pageToken){
-    global $db, $n, $filemtime, $jsoncredential ;
+    global $db, $n, $filemtime, $jsoncredential,$delete_duplicate;
     echo "SCANNING $idfolder FINISH\n\n";
     while(true){
         echo "remaining ".time()." - $filemtime = ".(time()-$filemtime)."\n";
@@ -80,52 +81,72 @@ function scanFolder($folder, $idfolder, $pageToken){
             if (!$db->has('t_games_url', ['url' => $item['id']])) {
                 if (in_array($item['fileExtension'],$allowed_ext)) {
                     if ($item['parents'][0] == $idfolder && !empty($item['name'])) {
-                        $gameid = getGameID($item['name']);
-                        $games = $db->get("t_games", ["name",'size'], ['titleid' => $gameid]);
-                        $gameName = $games['name'];
-                        if($item['size']==0){
-                            $item['size'] = $games['size']*1;
-                        }
-                        if (empty($gameName)) $gameName = str_replace([".xci", ".nsp", ".nsz"], "", $item['name']);
-                        if(empty($item['driveId'])){
-                            $db->insert('t_games_url', [
-                                'url' => $item['id'],
-                                'filename' => $item['name'],
-                                'title' => $gameName,
-                                'titleid' => $gameid,
-                                'fileSize' => $item['size'],
-                                'md5Checksum' => $item['md5Checksum'],
-                                'root' => $idfolder,
-                                'owner' => trim($item['owners'][0]['emailAddress']),
-                                'folder' => $folder,
-                                'shared' => 1, // user must share it
-                            ]);
+                        $md5Checksum = $db->get('t_games_url','md5Checksum',['AND'=>['filename'=>$item['name'],'owner'=>[trim($item['owners'][0]['emailAddress']),$item['driveId']]]]);
+                        if(!empty($md5Checksum) && $md5Checksum==$item['md5Checksum']){
+                            if($delete_duplicate){
+                                $del = delFile($item['id']);
+                                if(!empty($del['error'])){
+                                    echo $del['error']['message']."\n";
+                                }
+                            }
                         }else{
-                            $db->insert('t_games_url', [
-                                'url' => $item['id'],
-                                'filename' => $item['name'],
-                                'title' => $gameName,
-                                'titleid' => $gameid,
-                                'fileSize' => $item['size'],
-                                'md5Checksum' => $item['md5Checksum'],
-                                'root' => $idfolder,
-                                'owner' => $item['driveId'],
-                                'folder' => $folder,
-                                'shared' => 1, // user must share it
-                            ]);
-                        }
-                        if ($db->has('t_games_url', ['url' => $item['id']])) {
-                            $n++;
-                            echo "$n INSERTED " . $item['id'] . " - " . $item['name'] . "\n";
-                        } else {
-                            echo json_encode($db->error()) . "\n" . $item['name'] . "\n";
+                            $fileSize = $db->get('t_games_url','fileSize',['AND'=>['md5Checksum'=>$item['md5Checksum'],'owner'=>[trim($item['owners'][0]['emailAddress']),$item['driveId']]]]);
+                            if(!empty($fileSize) && $fileSize==$item['size']){
+                                if($delete_duplicate){
+                                    $del = delFile($item['id']);
+                                    if(!empty($del['error'])){
+                                        echo $del['error']['message']."\n";
+                                    }
+                                }
+                            }else{
+                                $gameid = getGameID($item['name']);
+                                $games = $db->get("t_games", ["name",'size'], ['titleid' => $gameid]);
+                                $gameName = $games['name'];
+                                if($item['size']==0){
+                                    $item['size'] = $games['size']*1;
+                                }
+                                if (empty($gameName)) $gameName = str_replace([".xci", ".nsp", ".nsz"], "", $item['name']);
+                                if(empty($item['driveId'])){
+                                    $db->insert('t_games_url', [
+                                        'url' => $item['id'],
+                                        'filename' => $item['name'],
+                                        'title' => $gameName,
+                                        'titleid' => $gameid,
+                                        'fileSize' => $item['size'],
+                                        'md5Checksum' => $item['md5Checksum'],
+                                        'root' => $idfolder,
+                                        'owner' => trim($item['owners'][0]['emailAddress']),
+                                        'folder' => $folder,
+                                        'shared' => 1, // user must share it
+                                    ]);
+                                }else{
+                                    $db->insert('t_games_url', [
+                                        'url' => $item['id'],
+                                        'filename' => $item['name'],
+                                        'title' => $gameName,
+                                        'titleid' => $gameid,
+                                        'fileSize' => $item['size'],
+                                        'md5Checksum' => $item['md5Checksum'],
+                                        'root' => $idfolder,
+                                        'owner' => $item['driveId'],
+                                        'folder' => $folder,
+                                        'shared' => 1, // user must share it
+                                    ]);
+                                }
+                                if ($db->has('t_games_url', ['url' => $item['id']])) {
+                                    $n++;
+                                    echo "$n INSERTED " . $item['id'] . " - " . $item['name'] . "\n";
+                                } else {
+                                    echo json_encode($db->error()) . "\n" . $item['name'] . "\n";
+                                }
+                            }
                         }
                     } else {
                         echo "Parents different " . $item['parents'][0] . "\n";
                     }
                 } else {
                     echo "NOT XCI/NSZ $item[mimeType]\n";
-                    //print_r($item);
+                    //Scan subfolder
                     if($item['mimeType']=='application/vnd.google-apps.folder'){
                         scanFolder($folder, $item['id'], null);
                     }
@@ -137,17 +158,6 @@ function scanFolder($folder, $idfolder, $pageToken){
         $pageToken = $list['nextPageToken'];
         if(empty($pageToken)) break;
     }
-    // check subfolder
-    // $pageToken = null;
-    // while(!true){
-    //     $folders = listFolder($idfolder,$pageToken);
-    //     $pageToken = $folders['nextPageToken'];
-    //     foreach($folders['items'] as $fdr){
-    //         echo "subfolder scan $fdr[id] \n";
-    //         scanFolder($folder, $fdr['id'], null);
-    //     }
-    //     if(empty($pageToken)) break;
-    // }
 
 }
 

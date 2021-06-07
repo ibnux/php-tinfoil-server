@@ -49,3 +49,6 @@ $drive_url = 'https://docs.google.com/uc?export=download&id=';
 
 // allowed phone number for auth
 $phone_country = ['62','08'];
+
+//Delete duplicate
+$delete_duplicate = true;

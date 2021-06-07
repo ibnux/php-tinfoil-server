@@ -69,6 +69,20 @@ function getFile($fileID){
     return json_decode($result,true);
 }
 
+function delFile($fileID){
+    global $jsoncredential;
+    $url = 'https://www.googleapis.com/drive/v3/files/'.$fileID.'?supportsAllDrives=true&fields=*' ;
+
+    echo "$url\n";
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization: Bearer '.$jsoncredential['access_token']));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($result,true);
+}
+
 function getGameID($str){
     $regex = '/\[\w{16,16}\]/';
     preg_match_all($regex, $str, $matches);
