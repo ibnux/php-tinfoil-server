@@ -51,22 +51,38 @@ if ($cleanTabel) {
 }
 
 $drives = explode("\n", str_replace("\r", "", file_get_contents("./folder.txt")));
+if(file_exists("./temp/folder.txt")){
+    $finished = file_get_contents("./temp/folder.txt");
+}else{
+    $finished = "";
+}
+
 $n = 0;
+$c = 0;
 foreach ($drives as $drive) {
-    echo "$drive\n";
     $drive = explode(" ", $drive);
-    if (count($drive) >= 2) {
-        $idfolder = trim($drive[0]);
-        $folder = trim($drive[1]);
-        scanFolder($folder, $idfolder, $pageToken);
-        echo "$idfolder FINISH\n\n";
+    if(strpos($finished,$drive[0])===false){
+        echo "$drive[0]\n";
+        if (count($drive) >= 2) {
+            $idfolder = trim($drive[0]);
+            $folder = trim($drive[1]);
+            scanFolder($folder, $idfolder, $pageToken);
+            echo "$idfolder FINISH\n\n";
+        }
+        file_put_contents("./temp/folder.txt",$drive[0]."\n",FILE_APPEND);
+        $finished[] = $drive[0];
+    }else{
+        echo "$drive[0] ALREADY DONE\n";
     }
 }
+echo "$c files scanned\n";
 echo "$n games inserted\n";
+if(file_exists("./temp/folder.txt")) unlink("./temp/folder.txt");
+
 
 function scanFolder($folder, $idfolder, $pageToken){
-    global $db, $n, $filemtime, $jsoncredential,$delete_duplicate;
-    echo "SCANNING $idfolder FINISH\n\n";
+    global $db, $n, $c, $filemtime, $jsoncredential,$delete_duplicate;
+    echo "SCANNING $idfolder\n\n";
     while(true){
         echo "remaining ".time()." - $filemtime = ".(time()-$filemtime)."\n";
         if(time()-$filemtime>3400){
@@ -78,6 +94,7 @@ function scanFolder($folder, $idfolder, $pageToken){
         $list =  listFiles($idfolder, $pageToken);
         $allowed_ext = ['xci','nsp','nsz'];
         foreach ($list['files'] as $item) {
+            $c++;
             if (!$db->has('t_games_url', ['url' => $item['id']])) {
                 if (in_array($item['fileExtension'],$allowed_ext)) {
                     if ($item['parents'][0] == $idfolder && !empty($item['name'])) {
