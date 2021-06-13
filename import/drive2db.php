@@ -1,4 +1,7 @@
 <?php
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(-1);
 
 /**
  * Import files inside google drive
@@ -60,19 +63,20 @@ if(file_exists("./temp/folder.txt")){
 $n = 0;
 $c = 0;
 foreach ($drives as $drive) {
-    $drive = explode(" ", $drive);
-    if(strpos($finished,$drive[0])===false){
-        echo "$drive[0]\n";
-        if (count($drive) >= 2) {
-            $idfolder = trim($drive[0]);
-            $folder = trim($drive[1]);
-            scanFolder($folder, $idfolder, $pageToken);
-            echo "$idfolder FINISH\n\n";
+    $drv = explode(" ", $drive);
+    if(strpos($finished,$drv[0])===false){
+        echo "$drv[0]\n";
+        if (count($drv) >= 2) {
+            $idfolder = trim($drv[0]);
+            $folder = trim($drv[1]);
+            scanFolder($folder, $idfolder, '');
+
         }
-        file_put_contents("./temp/folder.txt",$drive[0]."\n",FILE_APPEND);
-        $finished[] = $drive[0];
+        file_put_contents("./temp/folder.txt",$drv[0]."\n",FILE_APPEND);
+        $finished = $drv[0]."\n";
+        echo "$idfolder FINISH\n\n";
     }else{
-        echo "$drive[0] ALREADY DONE\n";
+        echo "$drv[0] ALREADY DONE\n";
     }
 }
 echo "$c files scanned\n";
@@ -175,7 +179,7 @@ function scanFolder($folder, $idfolder, $pageToken){
         $pageToken = $list['nextPageToken'];
         if(empty($pageToken)) break;
     }
-
+    echo "DONE SCANNING $idfolder\n\n";
 }
 
 if ($cleanCache) {
