@@ -1,13 +1,15 @@
 <?php
 
 function updateToken(){
-    global $client_id ,$client_sc,$jsoncredential;
+    global $client_id ,$client_sc,$jsoncredential,$filemtime;
     echo "update Token\n";
     $refresh_token = file_get_contents("token/refresh.token");
     $ch = curl_init('https://oauth2.googleapis.com/token');
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: x-www-form-urlencoded'));
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
     curl_setopt($ch, CURLOPT_POSTFIELDS,
         json_encode([
                 'client_id' => $client_id,
@@ -20,6 +22,9 @@ function updateToken(){
     $jsoncredential = json_decode($authToken,true);
     if(isset($jsoncredential['access_token'])){
         file_put_contents("token/creds.txt", $authToken);
+    }else{
+        echo $authToken;
+        die();
     }
 }
 
@@ -27,14 +32,16 @@ function updateToken(){
 function listFiles($folderID,$nextToken=null){
     global $jsoncredential;
     if(!empty($nextToken)){
-        $url = 'https://www.googleapis.com/drive/v3/files?q=\''.$folderID.'\'+in+parents&includeItemsFromAllDrives=true&supportsAllDrives=true&fields=*&pageToken='.$nextToken ;
+        $url = 'https://www.googleapis.com/drive/v3/files?q=\''.$folderID.'\'+in+parents&includeItemsFromAllDrives=true&supportsAllDrives=true&pageSize=1000&fields=*&pageToken='.$nextToken ;
     }else{
-        $url = 'https://www.googleapis.com/drive/v3/files?q=\''.$folderID.'\'+in+parents&includeItemsFromAllDrives=true&supportsAllDrives=true&fields=*' ;
+        $url = 'https://www.googleapis.com/drive/v3/files?q=\''.$folderID.'\'+in+parents&includeItemsFromAllDrives=true&pageSize=1000&supportsAllDrives=true&fields=*' ;
     }
     echo "$url\n";
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization: Bearer '.$jsoncredential['access_token']));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
     $result = curl_exec($ch);
     curl_close($ch);
     return json_decode($result,true);
@@ -51,6 +58,8 @@ function listFolder($folderID,$nextToken=null){
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization: Bearer '.$jsoncredential['access_token']));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
     $result = curl_exec($ch);
     curl_close($ch);
     return json_decode($result,true);
@@ -64,6 +73,8 @@ function getFile($fileID){
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization: Bearer '.$jsoncredential['access_token']));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
     $result = curl_exec($ch);
     curl_close($ch);
     return json_decode($result,true);
@@ -78,6 +89,8 @@ function delFile($fileID){
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization: Bearer '.$jsoncredential['access_token']));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true );
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
     $result = curl_exec($ch);
     curl_close($ch);
     return json_decode($result,true);
